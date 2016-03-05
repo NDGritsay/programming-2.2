@@ -1,4 +1,5 @@
 extern struct Book;
+extern struct BookHead;
 extern char **genres;
 
 //Описание: ввод данных новой книги
@@ -47,6 +48,18 @@ void endPrintOfTable(void);
 
 //Описание: вывод массива указателей на книги на экран
 void printBooks(Book **books);
+
+//Описание: добавление нового списка в массив списков
+//Возврат: указатель на голову списка
+BookHead **addHead(BookHead **heads);
+
+//Описание: ввод названия списка
+//Возврат: указатель на первый символ строки
+char *inputNameOfList(void);
+
+//Описание: проверка, существует ли список с таким же именем
+//Возврат: (1/0)
+int hasListThatName(char *name, BookHead **heads);
 
 #ifndef _BOOK_
 #define _BOOK_
