@@ -14,6 +14,7 @@ struct Book {
 	char *author;
 	char *genre;
 	int pageCt;
+	Book *next = nullptr;
 };
 
 struct BookHead {
@@ -455,49 +456,49 @@ Book *inputBook(void)
 }
 
 
-//Описание: вывод массива указателей на книги на экран
-//void printBooks(Book **books)
-//{
-//	int bookPrintCt, pageCt = PAGE_CT_MAX, pageCtRank = 0, bookCt = getBookCt(books);
-//	while (pageCt) //подсчет максимальной разрядности количества авторских листов
-//		pageCt /= 10, pageCtRank++;
-//
-//	system("cls");
-//	printf("==Вывод информации о книгах==");
-//	do
-//	{
-//		printf("\n\nСколько книг за один вывод вы хотите видеть?: ");
-//		if (scanf("%d", &bookPrintCt) != 1)
-//		{
-//			rewind(stdin);
-//			printf("\aОшибка! Вы ввели не число.\n");
-//			waitForEnter();
-//			bookPrintCt = -1;
-//		}
-//		else if (bookPrintCt <= 0)
-//		{
-//			printf("\aОшибка! Число должно быть больше 0.\n");
-//			waitForEnter();
-//		}
-//	} while (bookPrintCt <= 0);
-//
-//	system("cls");
-//	printf("==Вывод данных==\n"
-//		"Книги будут выводиться по %d за раз. Для продолжения вывода нажимайте\n"
-//		"  клавишу space.\n\n", bookPrintCt);
-//
-//	printHeadOfTable();
-//	for (int i = 0; i < bookCt; i++)
-//	{
-//		printf("|%-*s|%-*s|%-*s|%-*d|\n", TITLE_MAX_SIZE, (*(books + i))->title, AUTHOR_NAME_MAX_SIZE * 2 + 1, (*(books + i))->author,
-//			GENRE_MAX_SIZE, (*(books + i))->genre, pageCtRank, (*(books + i))->pageCt);
-//		if (i % bookPrintCt == bookPrintCt - 1)
-//			while (_getch() != ' ');
-//	}
-//	endPrintOfTable();
-//	printf("Вывод данных завершен!\n");
-//	waitForEnter();
-//}
+//Описание: вывод списка книг на экран
+void printBooks(Book **books) //все нахрен переписать
+{
+	int bookPrintCt, pageCt = PAGE_CT_MAX, pageCtRank = 0;
+	while (pageCt) //подсчет максимальной разрядности количества авторских листов
+		pageCt /= 10, pageCtRank++;
+
+	system("cls");
+	printf("==Вывод информации о книгах==");
+	do
+	{
+		printf("\n\nСколько книг за один вывод вы хотите видеть?: ");
+		if (scanf("%d", &bookPrintCt) != 1)
+		{
+			rewind(stdin);
+			printf("\aОшибка! Вы ввели не число.\n");
+			waitForEnter();
+			bookPrintCt = -1;
+		}
+		else if (bookPrintCt <= 0)
+		{
+			printf("\aОшибка! Число должно быть больше 0.\n");
+			waitForEnter();
+		}
+	} while (bookPrintCt <= 0);
+
+	system("cls");
+	printf("==Вывод данных==\n"
+		"Книги будут выводиться по %d за раз. Для продолжения вывода нажимайте\n"
+		"  клавишу space.\n\n", bookPrintCt);
+
+	printHeadOfTable();
+	for (int i = 0; i < bookCt; i++)
+	{
+		printf("|%-*s|%-*s|%-*s|%-*d|\n", TITLE_MAX_SIZE, (*(books + i))->title, AUTHOR_NAME_MAX_SIZE * 2 + 1, (*(books + i))->author,
+			GENRE_MAX_SIZE, (*(books + i))->genre, pageCtRank, (*(books + i))->pageCt);
+		if (i % bookPrintCt == bookPrintCt - 1)
+			while (_getch() != ' ');
+	}
+	endPrintOfTable();
+	printf("Вывод данных завершен!\n");
+	waitForEnter();
+}
 
 
 //Описание: вывод шапки таблицы на экран
@@ -574,14 +575,16 @@ BookHead **addHead(BookHead **heads)
 		;
 	heads = (BookHead**)realloc(heads, sizeof(BookHead*) * (i + 2));
 
-	while (hasListThatName(name = inputNameOfList(), heads))
+	while (hasHadsThatName(name = inputNameOfList(), heads))
 	{
 		printf("\aОшибка! Уже есть список с таким именем.\n");
 		waitForEnter();
+		system("cls");
 	}
 	
 	*(heads + i) = (BookHead*)malloc(sizeof(BookHead*));
-	(*(heads + i++))->name = name;
+	(*(heads + i))->name = name;
+	(*(heads + i))->head = nullptr;
 	*(heads + i) = nullptr;
 	
 	return heads;
@@ -595,7 +598,8 @@ char *inputNameOfList(void)
 	int isInputCorrect = 0, isInputFit, spaceCt;
 	char *name;
 
-	printf("Название списка может состоять из символов кирилицы и одного пробела.\n"
+	printf("=Ввод названия списка=\n"
+		"Название списка может состоять из символов кирилицы и одного пробела.\n"
 		"Все прописные буквы будут преобразованы в строчные.\n"
 		"Минимальная длинна названия списка - 3 символа.");
 	do
@@ -643,16 +647,27 @@ char *inputNameOfList(void)
 		else
 			isInputCorrect = 1;
 	} while (!isInputCorrect);
+
+	return name;
 }
 
 
 //Описание: проверка, существует ли список с таким же именем
 //Возврат: (1/0)
-int hasListThatName(char *name, BookHead **heads)
+int hasHadsThatName(char *name, BookHead **heads)
 {
-	int i = 0, res = 1;
+	int i = 0, res = 0;
 	while (*(heads + i) != nullptr && !res)
 		if (!strcmp(name, (*(heads + i))->name))
-			res = 0;
+			res = 1;
 	return res;
+}
+
+
+//Описание: добавление книги в конец списка
+void addLastBook(Book *head)
+{
+	while (head != nullptr)
+		head = head->next;
+	head = inputBook();
 }

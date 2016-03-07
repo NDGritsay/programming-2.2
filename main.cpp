@@ -12,8 +12,9 @@ int main(void)
 	SetConsoleOutputCP(1251);
 	system("title = ЛР2 Односвязные списки языка С/С++");
 
-	Word *words1 = 0, *words2 = 0;
 	int word1Ct = 0, word2Ct = 0, isProgEnd = 0;
+	BookHead **heads = (BookHead**)malloc(sizeof(BookHead*));
+	*heads = nullptr;
 
 	do
 	{

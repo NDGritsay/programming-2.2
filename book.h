@@ -59,7 +59,7 @@ char *inputNameOfList(void);
 
 //Описание: проверка, существует ли список с таким же именем
 //Возврат: (1/0)
-int hasListThatName(char *name, BookHead **heads);
+int hasHadsThatName(char *name, BookHead **heads);
 
 #ifndef _BOOK_
 #define _BOOK_
