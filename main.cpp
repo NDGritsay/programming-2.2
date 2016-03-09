@@ -3,17 +3,28 @@
 #include "ndgstrings.h"
 #include "book.h"
 
+//Описание: вывод меню на экран и выбор пункта
+//Взоврат: пункт меню
 int menu(void);
+
+//Описание: вывод справки на экран
 void reference(void);
+
+//Описание: вывод меню добавления книг и выбор пункта
+//Возврат: номер типа добовления
+int getAddType(void);
 
 int main(void)
 {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 	system("title = ЛР2 Односвязные списки языка С/С++");
+	genresInitialization();
 
-	int word1Ct = 0, word2Ct = 0, isProgEnd = 0;
+	int word1Ct = 0, word2Ct = 0, isProgEnd = 0, listId, addType;
+	void((*addBook[])(Book **)) = {addLastBook};
 	BookHead **heads = (BookHead**)malloc(sizeof(BookHead*));
+
 	*heads = nullptr;
 
 	do
@@ -21,17 +32,46 @@ int main(void)
 		system("cls");
 		switch (menu())
 		{
-		case 1: //Ввод исходного списка
+		case 1: //добавление списка
+			heads = addHead(heads);
 			break;
-		case 2: //Вывод исходного массива структур
+		case 2: //удаление списка
 			break;
-		case 3: //Формирование результирующего массива структур
-			break;
-		case 4: //Вывод результирующего массива структур
-			break;
-		case 5: //Вывод справки
-			reference();
+		case 3: //добавление книги
+			system("cls");
+			printf("=Добавление книги=\n");
+			if (*heads != nullptr)
+			{
+				listId = getListId(heads);
+				system("cls");
+				addType = getAddType();
+				system("cls");
+				addBook[addType](&(*(heads + listId))->head);
+				system("cls");
+				printf("=Добавление книги=\n"
+					"Добавление книги завершено!\n");
+			}
+			else
+				printf("Нет ни одного списка! Сначала создайте список.\n");
 			waitForEnter();
+			break;
+		case 4: //удаление книги
+			break;
+		case 5: //работа со списком
+			break;
+		case 6: //вывод списка
+			system("cls");
+			printf("=Вывод списка=\n");
+			if (*heads != nullptr)
+			{
+				listId = getListId(heads);
+				printBooks((*(heads + listId))->head);
+			}
+			else
+			{
+				printf("Нет ни одного списка! Сначала создайте список.\n");
+				waitForEnter();
+			}
 			break;
 		case 0: //Выход из программы
 			system("cls");
@@ -44,17 +84,21 @@ int main(void)
 	return 0;
 }
 
+
+//Описание: вывод меню на экран и выбор пункта
+//Взоврат: пункт меню
 int menu(void)
 {
 	int res, isInputCorrect = 0;
 	printf(
 		"=Меню=\n"
-		"1 - Ввод списка\n"
-		"2 - Добавление элемента\n" //первого, последнего, н-ного
-		"3 - Удаление элемента\n" //первого, последрего, н-ного, по критерию
-		"4 - Вывод списка\n" //полностью, по критериям
-		"5 - Сортировка списка\n"
-		"6 - Справка\n"
+		"1 - Добавление списка\n"
+		"2 - Удаление списка\n"
+		"3 - Добавление книги\n" //первого, последнего, н-ного
+		"4 - Удаление книги\n" //первого, последрего, н-ного, по критерию
+		"5 - Работа со списком\n"
+		"6 - Вывод списка\n" //полностью, по критериям
+		"7 - Справка\n"
 		"0 - Выход");
 	do
 	{
@@ -64,7 +108,7 @@ int menu(void)
 			printf("\aОшбика! Вы ввели не число.\n");
 			waitForEnter();
 		}
-		else if (res < 0 || res > 6)
+		else if (res < 0 || res > 7)
 		{
 			printf("\aОшибка! Такого пункта меню нет.\n");
 			waitForEnter();
@@ -75,6 +119,38 @@ int menu(void)
 	return res;
 }
 
+
+//Описание: вывод меню добавления книг и выбор пункта
+//Возврат: номер типа добовления
+int getAddType(void)
+{
+	int addType, isInputCorrect = 0;
+	printf("=Добавление элемента=\n"
+		"=Выбор типа добавления элемента=\n"
+		"1 - Добавить книгу в начало списка.\n"
+		"2 - Добавить книгу на позицию i.\n"
+		"3 - Добавить книгу в конец списка.");
+	do
+	{
+		printf("\nВведите тип добавления: ");
+		if (scanf("%d", &addType) != 1)
+		{
+			printf("\aОшибка! Вы ввели не число.\n");
+			waitForEnter();
+		}
+		else if (addType < 1 || addType > 3)
+		{
+			printf("\aОшбика! Нет типа с таким номером.\n");
+			waitForEnter();
+		}
+		else
+			isInputCorrect = 1;
+	} while (!isInputCorrect);
+	return addType - 1;
+}
+
+
+//Описание: вывод справки на экран
 void reference(void)
 {
 

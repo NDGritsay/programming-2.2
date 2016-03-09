@@ -47,7 +47,7 @@ void printHeadOfTable(void);
 void endPrintOfTable(void);
 
 //Описание: вывод массива указателей на книги на экран
-void printBooks(Book **books);
+void printBooks(Book *head);
 
 //Описание: добавление нового списка в массив списков
 //Возврат: указатель на голову списка
@@ -60,6 +60,25 @@ char *inputNameOfList(void);
 //Описание: проверка, существует ли список с таким же именем
 //Возврат: (1/0)
 int hasHadsThatName(char *name, BookHead **heads);
+
+//Описание: выбор списка
+//Возврат: порядковый номер списка
+int getListId(BookHead **heads);
+
+//Описание: добавление книги в конец списка
+void addLastBook(Book **head);
+
+//Описание: поиск последней в списке книге
+//Возврат: указатель на последнюю книгу в списке
+Book *getLastBook(Book *head);
+
+//Описание: поиск предпоследней в списке книги
+//Возврат: указатель на предпоследнюю в списке книгу
+Book *getLastButOneBook(Book *head);
+
+//Описание: ввод номера книги
+//Возврат: номер книги
+int getBookId(int bookCt);
 
 #ifndef _BOOK_
 #define _BOOK_

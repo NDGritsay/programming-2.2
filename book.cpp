@@ -14,7 +14,7 @@ struct Book {
 	char *author;
 	char *genre;
 	int pageCt;
-	Book *next = nullptr;
+	Book *next;
 };
 
 struct BookHead {
@@ -436,6 +436,7 @@ Book *inputBook(void)
 {
 	Book *book = (Book*)malloc(sizeof(Book));
 
+	book->next = nullptr;
 	printf("==Ввод данных о новой книге==\n");
 	book->title = setTitleOfBook();
 	system("cls");
@@ -457,46 +458,55 @@ Book *inputBook(void)
 
 
 //Описание: вывод списка книг на экран
-void printBooks(Book **books) //все нахрен переписать
+void printBooks(Book *head)
 {
-	int bookPrintCt, pageCt = PAGE_CT_MAX, pageCtRank = 0;
+	int i, bookPrintCt, pageCt = PAGE_CT_MAX, pageCtRank = 0;
 	while (pageCt) //подсчет максимальной разрядности количества авторских листов
 		pageCt /= 10, pageCtRank++;
 
 	system("cls");
 	printf("==Вывод информации о книгах==");
-	do
+	if (head == nullptr)
+		printf("\nСписок пуст.\n");
+	else
 	{
-		printf("\n\nСколько книг за один вывод вы хотите видеть?: ");
-		if (scanf("%d", &bookPrintCt) != 1)
+		do
 		{
-			rewind(stdin);
-			printf("\aОшибка! Вы ввели не число.\n");
-			waitForEnter();
-			bookPrintCt = -1;
-		}
-		else if (bookPrintCt <= 0)
+			printf("\n\nСколько книг за один вывод вы хотите видеть?: ");
+			if (scanf("%d", &bookPrintCt) != 1)
+			{
+				rewind(stdin);
+				printf("\aОшибка! Вы ввели не число.\n");
+				waitForEnter();
+				bookPrintCt = -1;
+			}
+			else if (bookPrintCt <= 0)
+			{
+				printf("\aОшибка! Число должно быть больше 0.\n");
+				waitForEnter();
+			}
+		} while (bookPrintCt <= 0);
+
+		system("cls");
+		printf("==Вывод данных==\n"
+			"Книги будут выводиться по %d за раз. Для продолжения вывода нажимайте\n"
+			"  клавишу space.\n\n", bookPrintCt);
+
+		printHeadOfTable();
+		i = 0;
+		while (head != nullptr)
 		{
-			printf("\aОшибка! Число должно быть больше 0.\n");
-			waitForEnter();
+			i++;
+			printf("|%-5d|%-*s|%-*s|%-*s|%-*d|\n",i, TITLE_MAX_SIZE, head->title, AUTHOR_NAME_MAX_SIZE * 2 + 1, head->author,
+				GENRE_MAX_SIZE, head->genre, pageCtRank, head->pageCt);
+			head = head->next;
+			if (i % bookPrintCt == 0)
+				while (_getch() != ' ')
+					;
 		}
-	} while (bookPrintCt <= 0);
-
-	system("cls");
-	printf("==Вывод данных==\n"
-		"Книги будут выводиться по %d за раз. Для продолжения вывода нажимайте\n"
-		"  клавишу space.\n\n", bookPrintCt);
-
-	printHeadOfTable();
-	for (int i = 0; i < bookCt; i++)
-	{
-		printf("|%-*s|%-*s|%-*s|%-*d|\n", TITLE_MAX_SIZE, (*(books + i))->title, AUTHOR_NAME_MAX_SIZE * 2 + 1, (*(books + i))->author,
-			GENRE_MAX_SIZE, (*(books + i))->genre, pageCtRank, (*(books + i))->pageCt);
-		if (i % bookPrintCt == bookPrintCt - 1)
-			while (_getch() != ' ');
+		endPrintOfTable();
+		printf("Вывод данных завершен!\n");
 	}
-	endPrintOfTable();
-	printf("Вывод данных завершен!\n");
 	waitForEnter();
 }
 
@@ -508,7 +518,7 @@ void printHeadOfTable(void)
 	while (pageCt) //подсчет максимальной разрядности количества авторских листов
 		pageCt /= 10, pageCtRank++;
 
-	printf(" ");  //верхняя строка
+	printf(" _____ ");  //верхняя строка
 	for (int i = 0; i < TITLE_MAX_SIZE; i++)
 		printf("_");
 	printf(" ");
@@ -522,10 +532,10 @@ void printHeadOfTable(void)
 		printf("_");
 	printf("\n");
 
-	printf("|%-*s|%-*s|%-*s|%-*s|\n", TITLE_MAX_SIZE, "Название", AUTHOR_NAME_MAX_SIZE * 2 + 1, "Автор",
+	printf("|%-5s|%-*s|%-*s|%-*s|%-*s|\n","Номер", TITLE_MAX_SIZE, "Название", AUTHOR_NAME_MAX_SIZE * 2 + 1, "Автор",
 		GENRE_MAX_SIZE, "Жанр", pageCtRank, "АЛ");
 
-	printf("|");  //нижняя строка
+	printf("|_____|");  //нижняя строка
 	for (int i = 0; i < TITLE_MAX_SIZE; i++)
 		printf("_");
 	printf("|");
@@ -548,7 +558,7 @@ void endPrintOfTable(void)
 	while (pageCt) //подсчет максимальной разрядности количества авторских листов
 		pageCt /= 10, pageCtRank++;
 
-	printf("|");
+	printf("|_____|");
 	for (int i = 0; i < TITLE_MAX_SIZE; i++)
 		printf("_");
 	printf("|");
@@ -575,17 +585,23 @@ BookHead **addHead(BookHead **heads)
 		;
 	heads = (BookHead**)realloc(heads, sizeof(BookHead*) * (i + 2));
 
+	system("cls");
+	printf("=Добавление списка=\n");
 	while (hasHadsThatName(name = inputNameOfList(), heads))
 	{
 		printf("\aОшибка! Уже есть список с таким именем.\n");
 		waitForEnter();
 		system("cls");
+		printf("=Добавление списка=\n");
 	}
 	
 	*(heads + i) = (BookHead*)malloc(sizeof(BookHead*));
 	(*(heads + i))->name = name;
 	(*(heads + i))->head = nullptr;
-	*(heads + i) = nullptr;
+	*(heads + i + 1) = nullptr;
+
+	printf("Добавление списка завершено!\n");
+	waitForEnter();
 	
 	return heads;
 }
@@ -664,10 +680,92 @@ int hasHadsThatName(char *name, BookHead **heads)
 }
 
 
-//Описание: добавление книги в конец списка
-void addLastBook(Book *head)
+//Описание: выбор списка
+//Возврат: порядковый номер списка
+int getListId(BookHead **heads)
 {
-	while (head != nullptr)
-		head = head->next;
-	head = inputBook();
+	int i = 0, listId, isInputCorrect = 0;
+
+	while (*(heads + i) != nullptr)
+	{
+		printf("%d - %s.\n", i + 1, (*(heads + i))->name);
+		i++;
+	}
+	do
+	{
+		printf("\nВведите номер списка: ");
+		if (scanf("%d", &listId) != 1)
+		{
+			printf("\aОшибка! Вы ввели не число.\n");
+			waitForEnter();
+		}
+		else if (listId < 1 || listId > i)
+		{
+			printf("\aОшибка! Списка с таким номером нет.\n");
+			waitForEnter();
+		}
+		else
+			isInputCorrect = 1;
+	} while (!isInputCorrect);
+	return listId - 1;
+}
+
+
+//Описание: добавление книги в конец списка
+void addLastBook(Book **head)
+{
+	if (*head != nullptr)
+	{
+		Book *bookPt = *head;
+		while (bookPt->next != nullptr)
+			bookPt = bookPt->next;
+		bookPt->next = inputBook();
+	}
+	else
+		*head = inputBook();
+}
+
+
+//Описание: поиск последней в списке книге
+//Возврат: указатель на последнюю книгу в списке
+Book *getLastBook(Book *head)
+{
+	if(head != nullptr)
+		while (head->next != nullptr)
+			head = head->next;
+	return head;
+}
+
+
+//Описание: поиск предпоследней в списке книги
+//Возврат: указатель на предпоследнюю в списке книгу
+Book *getLastButOneBook(Book *head)
+{
+	if (head->next == nullptr)
+		head = nullptr;
+	else
+		while (head->next->next != nullptr)
+			head = head->next;
+	return head;
+}
+
+
+//Описание: ввод номера книги
+//Возврат: номер книги
+int getBookId(int bookCt)
+{
+	int isInputCorrect = 0, bookId;
+	do
+	{
+		printf("\nВведите номер книги: ");
+		if (scanf("%d", &bookId) != 1)
+			printf("\aОшибка! Вы ввели не число.\n");
+		else if (bookId < 0 || bookId > bookCt)
+			printf("\aОшибка! Число должно быть больше 0 и меньше %d", bookCt - 1);
+		else
+			isInputCorrect = 1;
+		if (!isInputCorrect)
+			waitForEnter();
+	} while (!isInputCorrect);
+	return bookId - 1;
 }
