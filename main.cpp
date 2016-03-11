@@ -14,6 +14,10 @@ void reference(void);
 //Возврат: номер типа добовления
 int getAddType(void);
 
+//Описание: вывод меню удаления книг и выбор пункта
+//Возврат: номер типа удаления
+int getDeleteType(void);
+
 int main(void)
 {
 	SetConsoleCP(1251);
@@ -21,8 +25,9 @@ int main(void)
 	system("title = ЛР2 Односвязные списки языка С/С++");
 	genresInitialization();
 
-	int word1Ct = 0, word2Ct = 0, isProgEnd = 0, listId, addType;
-	void((*addBook[])(Book **)) = {addLastBook};
+	int word1Ct = 0, word2Ct = 0, isProgEnd = 0, listId, addType, deleteType;
+	void((*addBook[])(Book**)) = {addFirstBook, addLastBook};
+	void((*deleteBook[])(Book**)) = { deleteFirstBook, deleteLastBook };
 	BookHead **heads = (BookHead**)malloc(sizeof(BookHead*));
 
 	*heads = nullptr;
@@ -63,10 +68,32 @@ int main(void)
 					"Добавление книги завершено!\n");
 			}
 			else
-				printf("Нет ни одного списка! Сначала создайте список.\n");
+				printf("\aНет ни одного списка! Сначала создайте список.\n");
 			waitForEnter();
 			break;
 		case 4: //удаление книги
+			system("cls");
+			printf("=Удаление книги=\n");
+			if (*heads != nullptr)
+			{
+				listId = getListId(heads);
+				system("cls");
+				if ((*(heads + listId))->head != nullptr)
+				{
+					deleteType = getDeleteType();
+					system("cls");
+					deleteBook[deleteType](&(*(heads + listId))->head);
+					system("cls");
+					printf("=Удаление книги=\n"
+						"Удаление книги завершено!\n");
+				}
+				else
+					printf("=Удаление книги=\n"
+						"\aСписок пуст!\n");
+			}
+			else
+				printf("\aНет ни одного списка! Сначала создайте список.\n");
+			waitForEnter();
 			break;
 		case 5: //работа со списком
 			break;
@@ -136,11 +163,10 @@ int menu(void)
 int getAddType(void)
 {
 	int addType, isInputCorrect = 0;
-	printf("=Добавление элемента=\n"
-		"=Выбор типа добавления элемента=\n"
+	printf("=Добавление книги=\n"
+		"=Выбор типа добавления книги=\n"
 		"1 - Добавить книгу в начало списка.\n"
-		"2 - Добавить книгу на позицию i.\n"
-		"3 - Добавить книгу в конец списка.");
+		"2 - Добавить книгу в конец списка.");
 	do
 	{
 		printf("\nВведите тип добавления: ");
@@ -149,7 +175,7 @@ int getAddType(void)
 			printf("\aОшибка! Вы ввели не число.\n");
 			waitForEnter();
 		}
-		else if (addType < 1 || addType > 3)
+		else if (addType < 1 || addType > 2)
 		{
 			printf("\aОшбика! Нет типа с таким номером.\n");
 			waitForEnter();
@@ -158,6 +184,35 @@ int getAddType(void)
 			isInputCorrect = 1;
 	} while (!isInputCorrect);
 	return addType - 1;
+}
+
+
+//Описание: вывод меню удаления книг и выбор пункта
+//Возврат: номер типа удаления
+int getDeleteType(void)
+{
+	int deleteType, isInputCorrect = 0;
+	printf("=Удаление книги=\n"
+		"=Выбор типа удаления книги=\n"
+		"1 - Удалить первую книгу списка.\n"
+		"2 - Удалить последнюю книгу списка.");
+	do
+	{
+		printf("\nВведите тип удаления: ");
+		if (scanf("%d", &deleteType) != 1)
+		{
+			printf("\aОшибка! Вы ввели не число.\n");
+			waitForEnter();
+		}
+		else if (deleteType < 1 || deleteType > 2)
+		{
+			printf("\aОшбика! Нет типа с таким номером.\n");
+			waitForEnter();
+		}
+		else
+			isInputCorrect = 1;
+	} while (!isInputCorrect);
+	return deleteType - 1;
 }
 
 

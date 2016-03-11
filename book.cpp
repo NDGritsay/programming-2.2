@@ -462,7 +462,7 @@ Book *inputBook(void)
 //Возврат: количество книг в списке
 int printBooks(Book *head)
 {
-	int i, bookPrintCt, pageCt = PAGE_CT_MAX, pageCtRank = 0;
+	int i = 0, bookPrintCt, pageCt = PAGE_CT_MAX, pageCtRank = 0;
 	while (pageCt) //подсчет максимальной разрядности количества авторских листов
 		pageCt /= 10, pageCtRank++;
 
@@ -495,7 +495,6 @@ int printBooks(Book *head)
 			"  клавишу space.\n\n", bookPrintCt);
 
 		printHeadOfTable();
-		i = 0;
 		while (head != nullptr)
 		{
 			i++;
@@ -733,6 +732,15 @@ int getListId(BookHead **heads)
 }
 
 
+//Описание: добавление книги в начало списка
+void addFirstBook(Book **head)
+{
+	Book *next = *head;
+	*head = inputBook();
+	(*head)->next = next;
+}
+
+
 //Описание: добавление книги в конец списка
 void addLastBook(Book **head)
 {
@@ -740,6 +748,27 @@ void addLastBook(Book **head)
 		getLastBook(*head)->next = inputBook();
 	else
 		*head = inputBook();
+}
+
+
+//Описание: удаление первой в списке книги
+void deleteFirstBook(Book **head)
+{
+	Book *temp = *head;
+	*head = (*head)->next;
+	free(temp);
+}
+
+
+//Описание: удаление последней в списке книги
+void deleteLastBook(Book **head)
+{
+	Book *temp = getLastBook(*head);
+	if ((*head)->next != nullptr)
+		getLastButOneBook(*head)->next = nullptr;
+	else
+		(*head) = nullptr;
+	free(temp);
 }
 
 
@@ -873,10 +902,4 @@ Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2))
 		book1 = book1->next;
 	}
 	return head;
-}
-
-
-int namesort(Book *book1, Book *book2)
-{
-	return strcmp(book1->title, book2->title);
 }

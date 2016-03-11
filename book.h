@@ -22,7 +22,7 @@ char *setGenreOfBook(void);
 //Возврат: количество авторских листов книги
 int setPageCtOfBook(void);
 
-//Описание: инициализирует массив жанров
+//Описание: инициализация массива жанров
 void genresInitialization(void);
 
 //Описание: проверка, есть ли жанр в списке жанров
@@ -66,8 +66,17 @@ int hasHadsThatName(char *name, BookHead **heads);
 //Возврат: порядковый номер списка
 int getListId(BookHead **heads);
 
+//Описание: добавление книги в начало списка
+void addFirstBook(Book **head);
+
 //Описание: добавление книги в конец списка
 void addLastBook(Book **head);
+
+//Описание: удаление первой в списке книги
+void deleteFirstBook(Book **head);
+
+//Описание: удаление последней в списке книги
+void deleteLastBook(Book **head);
 
 //Описание: поиск последней в списке книге
 //Возврат: указатель на последнюю книгу в списке
