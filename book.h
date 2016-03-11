@@ -77,9 +77,9 @@ Book *getLastBook(Book *head);
 //Возврат: указатель на предпоследнюю в списке книгу
 Book *getLastButOneBook(Book *head);
 
-//Описание: ввод номера книги
+//Описание: поиск номера книги
 //Возврат: номер книги
-int getBookId(int bookCt);
+int getBookId(Book *head, Book *book);
 
 //Описание: освобождение памяти односвязного списка
 void freeList(Book *head);
@@ -98,6 +98,10 @@ int setBookId(int bookCt);
 
 //Описание: перестановка двух книг в списке
 Book *swapBooks(Book *head, int i, int j);
+
+//Описание: сортировка книг в списке
+//Возврат: указатель на первую книгу
+Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2));
 
 #ifndef _BOOK_
 #define _BOOK_

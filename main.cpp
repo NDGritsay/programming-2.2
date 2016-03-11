@@ -77,8 +77,6 @@ int main(void)
 			{
 				listId = getListId(heads);
 				printBooks((*(heads + listId))->head);
-				(*(heads + listId))->head = swapBooks((*(heads + listId))->head, 1, 3);
-				printBooks((*(heads + listId))->head);
 			}
 			else
 			{

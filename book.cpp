@@ -767,24 +767,14 @@ Book *getLastButOneBook(Book *head)
 }
 
 
-//Описание: ввод номера книги
+//Описание: поиск номера книги
 //Возврат: номер книги
-int getBookId(int bookCt)
+int getBookId(Book *head, Book *book)
 {
-	int isInputCorrect = 0, bookId;
-	do
-	{
-		printf("\nВведите номер книги: ");
-		if (scanf("%d", &bookId) != 1)
-			printf("\aОшибка! Вы ввели не число.\n");
-		else if (bookId < 0 || bookId > bookCt)
-			printf("\aОшибка! Число должно быть больше 0 и меньше %d", bookCt - 1);
-		else
-			isInputCorrect = 1;
-		if (!isInputCorrect)
-			waitForEnter();
-	} while (!isInputCorrect);
-	return bookId - 1;
+	int i;
+	for (i = 0; head != book; head = head->next)
+		i++;
+	return i;
 }
 
 
@@ -853,4 +843,40 @@ Book *swapBooks(Book *head, int i, int j)
 	getBookById(head, j)->next = jNextPtr;
 
 	return head;
+}
+
+
+//Описание: сортировка книг в списке
+//Возврат: указатель на первую книгу
+Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2))
+{
+	Book *book1, *book2;
+
+	book1 = head;
+	while (book1 != nullptr)
+	{
+		book2 = book1->next;
+		while (book2 != nullptr)
+		{
+			if (bookCompare(book1, book2) > 0)
+			{
+				if (book1 == head)
+					head = swapBooks(book1, 0, getBookId(book1, book2));
+				else
+					getBookById(book1, getBookId(head, book1) - 1)->next = swapBooks(book1, 0, getBookId(book1, book2));
+				Book *temp = book1;
+				book1 = book2;
+				book2 = temp;
+			}
+			book2 = book2->next;
+		}
+		book1 = book1->next;
+	}
+	return head;
+}
+
+
+int namesort(Book *book1, Book *book2)
+{
+	return strcmp(book1->title, book2->title);
 }
