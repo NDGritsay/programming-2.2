@@ -33,9 +33,20 @@ int main(void)
 		switch (menu())
 		{
 		case 1: //добавление списка
-			heads = addHead(heads);
+			heads = addList(heads);
 			break;
 		case 2: //удаление списка
+			system("cls");
+			printf("=”даление списка=\n");
+			if (*heads != nullptr)
+			{
+				listId = getListId(heads);
+				heads = deleteList(heads, listId);
+				printf("”даление списка завершено!\n");
+			}
+			else
+				printf("Ќет ни одного списка, чтобы удалить!\n");
+			waitForEnter();
 			break;
 		case 3: //добавление книги
 			system("cls");
@@ -65,6 +76,8 @@ int main(void)
 			if (*heads != nullptr)
 			{
 				listId = getListId(heads);
+				printBooks((*(heads + listId))->head);
+				(*(heads + listId))->head = swapBooks((*(heads + listId))->head, 1, 3);
 				printBooks((*(heads + listId))->head);
 			}
 			else

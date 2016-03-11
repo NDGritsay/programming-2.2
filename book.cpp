@@ -436,7 +436,6 @@ Book *inputBook(void)
 {
 	Book *book = (Book*)malloc(sizeof(Book));
 
-	book->next = nullptr;
 	printf("==Ввод данных о новой книге==\n");
 	book->title = setTitleOfBook();
 	system("cls");
@@ -448,6 +447,8 @@ Book *inputBook(void)
 	system("cls");
 	printf("==Ввод данных о новой книге==\n");
 	book->pageCt = setPageCtOfBook();
+	book->next = nullptr;
+
 	system("cls");
 	printf("==Ввод данных о новой книге==\n"
 		"Ввод данных о новой книге завершен!\n");
@@ -458,14 +459,15 @@ Book *inputBook(void)
 
 
 //Описание: вывод списка книг на экран
-void printBooks(Book *head)
+//Возврат: количество книг в списке
+int printBooks(Book *head)
 {
 	int i, bookPrintCt, pageCt = PAGE_CT_MAX, pageCtRank = 0;
 	while (pageCt) //подсчет максимальной разрядности количества авторских листов
 		pageCt /= 10, pageCtRank++;
 
 	system("cls");
-	printf("==Вывод информации о книгах==");
+	printf("==Вывод списка==");
 	if (head == nullptr)
 		printf("\nСписок пуст.\n");
 	else
@@ -488,7 +490,7 @@ void printBooks(Book *head)
 		} while (bookPrintCt <= 0);
 
 		system("cls");
-		printf("==Вывод данных==\n"
+		printf("==Вывод списка==\n"
 			"Книги будут выводиться по %d за раз. Для продолжения вывода нажимайте\n"
 			"  клавишу space.\n\n", bookPrintCt);
 
@@ -508,6 +510,7 @@ void printBooks(Book *head)
 		printf("Вывод данных завершен!\n");
 	}
 	waitForEnter();
+	return i;
 }
 
 
@@ -575,8 +578,8 @@ void endPrintOfTable(void)
 
 
 //Описание: добавление нового списка в массив списков
-//Возврат: указатель на голову списка
-BookHead **addHead(BookHead **heads)
+//Возврат: указатель на голову первого списка
+BookHead **addList(BookHead **heads)
 {
 	char *name;
 
@@ -595,7 +598,7 @@ BookHead **addHead(BookHead **heads)
 		printf("=Добавление списка=\n");
 	}
 	
-	*(heads + i) = (BookHead*)malloc(sizeof(BookHead*));
+	*(heads + i) = (BookHead*)malloc(sizeof(BookHead));
 	(*(heads + i))->name = name;
 	(*(heads + i))->head = nullptr;
 	*(heads + i + 1) = nullptr;
@@ -603,6 +606,22 @@ BookHead **addHead(BookHead **heads)
 	printf("Добавление списка завершено!\n");
 	waitForEnter();
 	
+	return heads;
+}
+
+
+//Описание: удаление списка
+//Возврат: указатель на голову первого списка
+BookHead **deleteList(BookHead **heads, int listId)
+{
+	freeList((*(heads + listId))->head);
+	free(*(heads + listId));
+	int i = listId;
+	do
+	{
+		*(heads + i) = *(heads + i + 1);
+	} while (*(heads + i++) != nullptr);
+	heads = (BookHead**)realloc(heads, sizeof(BookHead*) * i);
 	return heads;
 }
 
@@ -674,8 +693,11 @@ int hasHadsThatName(char *name, BookHead **heads)
 {
 	int i = 0, res = 0;
 	while (*(heads + i) != nullptr && !res)
+	{
 		if (!strcmp(name, (*(heads + i))->name))
 			res = 1;
+		i++;
+	}
 	return res;
 }
 
@@ -715,12 +737,7 @@ int getListId(BookHead **heads)
 void addLastBook(Book **head)
 {
 	if (*head != nullptr)
-	{
-		Book *bookPt = *head;
-		while (bookPt->next != nullptr)
-			bookPt = bookPt->next;
-		bookPt->next = inputBook();
-	}
+		getLastBook(*head)->next = inputBook();
 	else
 		*head = inputBook();
 }
@@ -768,4 +785,72 @@ int getBookId(int bookCt)
 			waitForEnter();
 	} while (!isInputCorrect);
 	return bookId - 1;
+}
+
+
+//Описание: освобождение памяти односвязного списка
+void freeList(Book *head)
+{
+	Book *previous;
+
+	while (head != nullptr)
+	{
+		previous = head;
+		head = head->next;
+		free(previous);
+	}
+}
+
+
+//Описание: поиск книги по ее номеру в списке
+//Возврат: указатель на книгу
+Book* getBookById(Book *head, int BookId)
+{
+	for (int i = 0; i < BookId; i++)
+		head = head->next;
+	return head;
+}
+
+
+//Описание: ввод номера книги
+//Возврат: номер книги
+int setBookId(int bookCt)
+{
+	int bookId, isInputCorrect = 0;
+	do
+	{
+		printf("Введите номер книги: ");
+		if (scanf("%d", &bookId) != 1)
+			printf("\aОшибка! Вы ввели не число.\n");
+		else if (bookId < 0 || bookId > bookCt)
+			printf("\aОшибка! Нет такого номера книги.");
+		else
+			isInputCorrect = 1;
+		if (!isInputCorrect)
+			waitForEnter();
+	} while (!isInputCorrect);
+	return bookId;
+}
+
+
+//Описание: перестановка двух книг в списке
+Book *swapBooks(Book *head, int i, int j)
+{
+	Book *iPtr, *iNextPtr, *jNextPtr;
+	iPtr = getBookById(head, i);
+	iNextPtr = iPtr->next;
+	jNextPtr = getBookById(head, j)->next;
+
+	if (i > 0)
+		getBookById(head, i - 1)->next = getBookById(head, j);
+	else
+		head = getBookById(head, j);
+
+	if (i - j != 1)
+		getBookById(head, i)->next = iNextPtr;
+
+	getBookById(head, j - 1)->next = iPtr;
+	getBookById(head, j)->next = jNextPtr;
+
+	return head;
 }

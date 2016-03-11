@@ -47,11 +47,12 @@ void printHeadOfTable(void);
 void endPrintOfTable(void);
 
 //Описание: вывод массива указателей на книги на экран
-void printBooks(Book *head);
+//Возврат: количество вниг в списке
+int printBooks(Book *head);
 
 //Описание: добавление нового списка в массив списков
 //Возврат: указатель на голову списка
-BookHead **addHead(BookHead **heads);
+BookHead **addList(BookHead **heads);
 
 //Описание: ввод названия списка
 //Возврат: указатель на первый символ строки
@@ -79,6 +80,24 @@ Book *getLastButOneBook(Book *head);
 //Описание: ввод номера книги
 //Возврат: номер книги
 int getBookId(int bookCt);
+
+//Описание: освобождение памяти односвязного списка
+void freeList(Book *head);
+
+//Описание: поиск книги по ее номеру в списке
+//Возврат: указатель на книгу
+Book* getBookById(Book *head, int BookId);
+
+//Описание: удаление списка
+//Возврат: указатель на голову первого списка
+BookHead **deleteList(BookHead **heads, int listId);
+
+//Описание: ввод номера книги
+//Возврат: номер книги
+int setBookId(int bookCt);
+
+//Описание: перестановка двух книг в списке
+Book *swapBooks(Book *head, int i, int j);
 
 #ifndef _BOOK_
 #define _BOOK_
