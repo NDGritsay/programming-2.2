@@ -64,7 +64,7 @@ int hasHadsThatName(char *name, BookHead **heads);
 
 //Описание: выбор списка
 //Возврат: порядковый номер списка
-int getListId(BookHead **heads);
+int setListId(BookHead **heads);
 
 //Описание: добавление книги в начало списка
 void addFirstBook(Book **head);
@@ -111,6 +111,10 @@ Book *swapBooks(Book *head, int i, int j);
 //Описание: сортировка книг в списке
 //Возврат: указатель на первую книгу
 Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2));
+
+//Описание: создает копию списка
+//Возврат: указатель на первую книгу списка
+Book *listCopy(Book *head1);
 
 #ifndef _BOOK_
 #define _BOOK_

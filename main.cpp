@@ -26,8 +26,8 @@ int main(void)
 	genresInitialization();
 
 	int word1Ct = 0, word2Ct = 0, isProgEnd = 0, listId, addType, deleteType;
-	void((*addBook[])(Book**)) = {addFirstBook, addLastBook};
-	void((*deleteBook[])(Book**)) = { deleteFirstBook, deleteLastBook };
+	void((*addBook[])(Book**)) = {addFirstBook, addLastBook};  //массив функций добавления книг
+	void((*deleteBook[])(Book**)) = { deleteFirstBook, deleteLastBook };  //массив функций удаления книг
 	BookHead **heads = (BookHead**)malloc(sizeof(BookHead*));
 
 	*heads = nullptr;
@@ -45,7 +45,7 @@ int main(void)
 			printf("=Удаление списка=\n");
 			if (*heads != nullptr)
 			{
-				listId = getListId(heads);
+				listId = setListId(heads);
 				heads = deleteList(heads, listId);
 				printf("Удаление списка завершено!\n");
 			}
@@ -58,7 +58,7 @@ int main(void)
 			printf("=Добавление книги=\n");
 			if (*heads != nullptr)
 			{
-				listId = getListId(heads);
+				listId = setListId(heads);
 				system("cls");
 				addType = getAddType();
 				system("cls");
@@ -76,7 +76,7 @@ int main(void)
 			printf("=Удаление книги=\n");
 			if (*heads != nullptr)
 			{
-				listId = getListId(heads);
+				listId = setListId(heads);
 				system("cls");
 				if ((*(heads + listId))->head != nullptr)
 				{
@@ -96,13 +96,24 @@ int main(void)
 			waitForEnter();
 			break;
 		case 5: //работа со списком
-			break;
+			heads = addList(heads);
+			(*(heads + 1))->head = listCopy((*(heads))->head);
+			/*if (*heads != nullptr)
+			{
+				system("cls");
+				printf("=Работа со списком=\n");
+				listId = setListId(heads);
+			}
+			else
+				printf("\aНет ни одного списка! Сначала создайте список.\n");
+			waitForEnter();
+			break;*/
 		case 6: //вывод списка
 			system("cls");
 			printf("=Вывод списка=\n");
 			if (*heads != nullptr)
 			{
-				listId = getListId(heads);
+				listId = setListId(heads);
 				printBooks((*(heads + listId))->head);
 			}
 			else

@@ -703,7 +703,7 @@ int hasHadsThatName(char *name, BookHead **heads)
 
 //Описание: выбор списка
 //Возврат: порядковый номер списка
-int getListId(BookHead **heads)
+int setListId(BookHead **heads)
 {
 	int i = 0, listId, isInputCorrect = 0;
 
@@ -902,4 +902,35 @@ Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2))
 		book1 = book1->next;
 	}
 	return head;
+}
+
+
+//Описание: создает копию списка
+//Возврат: указатель на первую книгу списка
+Book *listCopy(Book *head1)
+{
+	Book *head2, *temp;
+	if (head1 == nullptr)
+		head2 = nullptr;
+	else
+	{
+		head2 = (Book*)malloc(sizeof(Book));
+		temp = head2;
+		while (head1->next != nullptr)
+		{
+			temp->title = head1->title;
+			temp->author = head1->author;
+			temp->genre = head1->genre;
+			temp->pageCt = head1->pageCt;
+			temp->next = (Book*)malloc(sizeof(Book));
+			temp = temp->next;
+			head1 = head1->next;
+		}
+		temp->title = head2->title;
+		temp->author = head2->author;
+		temp->genre = head2->genre;
+		temp->pageCt = head2->pageCt;
+		temp->next = nullptr;
+	}
+	return head2;
 }
