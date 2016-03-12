@@ -112,6 +112,9 @@ Book *swapBooks(Book *head, int i, int j);
 //¬озврат: указатель на первую книгу
 Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2));
 
+//ќписание: копирует данные из одной книги в другую
+void bookCopy(Book *origin, Book *copy);
+
 //ќписание: создает копию списка
 //¬озврат: указатель на первую книгу списка
 Book *listCopy(Book *head1);

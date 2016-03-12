@@ -18,6 +18,10 @@ int getAddType(void);
 //Возврат: номер типа удаления
 int getDeleteType(void);
 
+//Описание: вывод меню сортировки книг и выбор пункта
+//Возврат: номер типа сортировки
+int getCompareType(void);
+
 int main(void)
 {
 	SetConsoleCP(1251);
@@ -25,9 +29,11 @@ int main(void)
 	system("title = ЛР2 Односвязные списки языка С/С++");
 	genresInitialization();
 
-	int word1Ct = 0, word2Ct = 0, isProgEnd = 0, listId, addType, deleteType;
+	int word1Ct = 0, word2Ct = 0, isProgEnd = 0, listId, newListId, addType, deleteType;
 	void((*addBook[])(Book**)) = {addFirstBook, addLastBook};  //массив функций добавления книг
 	void((*deleteBook[])(Book**)) = { deleteFirstBook, deleteLastBook };  //массив функций удаления книг
+	int((*compareBooks[])(Book*, Book*));  //массив функций сравнения книг
+	int((*isBookFit[])(Book*, void*));  //массив функций поиска книг по критерию
 	BookHead **heads = (BookHead**)malloc(sizeof(BookHead*));
 
 	*heads = nullptr;
@@ -96,8 +102,6 @@ int main(void)
 			waitForEnter();
 			break;
 		case 5: //работа со списком
-			heads = addList(heads);
-			(*(heads + 1))->head = listCopy((*(heads))->head);
 			/*if (*heads != nullptr)
 			{
 				system("cls");
@@ -106,8 +110,8 @@ int main(void)
 			}
 			else
 				printf("\aНет ни одного списка! Сначала создайте список.\n");
-			waitForEnter();
-			break;*/
+			waitForEnter();*/
+			break;
 		case 6: //вывод списка
 			system("cls");
 			printf("=Вывод списка=\n");
@@ -224,6 +228,79 @@ int getDeleteType(void)
 			isInputCorrect = 1;
 	} while (!isInputCorrect);
 	return deleteType - 1;
+}
+
+
+//Описание: вывод меню сортировки книг и выбор пункта
+//Возврат: номер типа сортировки
+int getCompareType(void)
+{
+	int compareType, isInputCorrect = 0;
+	printf("=Выбор типа сортировки книг=\n"
+		"1 - Сортировка по названию.\n"
+		"2 - Сортировка по автору.\n"
+		"3 - Сортировка по жанру.\n"
+		"4 - Сортировка по количеству авторских листов.");
+	do
+	{
+		printf("\nВведите тип сортировки: ");
+		if (scanf("%d", &compareType) != 1)
+		{
+			printf("\aОшибка! Вы ввели не число.\n");
+			waitForEnter();
+		}
+		else if (compareType < 1 || compareType > 4)
+		{
+			printf("\aОшбика! Нет типа с таким номером.\n");
+			waitForEnter();
+		}
+		else
+			isInputCorrect = 1;
+	} while (!isInputCorrect);
+	return compareType - 1;
+}
+
+
+//Описание: вывод меню поиска книг и выбор пункта
+//Возврат: указатель на функцию поиска книг
+int getFindFunction(void)
+{
+	int findType, isInputCorrect = 0;
+	printf("1 - Поиск по названию.\n"
+		"2 - Поиск по автору.\n"
+		"3 - Поиск по жанру.\n"
+		"4 - Поиск по минимуму авторских листов.\n"
+		"5 - Поиск по максимуму авторских листов.");
+	do
+	{
+		printf("\nВведите тип поиска: ");
+		if (scanf("%d", &findType) != 1)
+		{
+			printf("\aОшибка! Вы ввели не число.\n");
+			waitForEnter();
+		}
+		else if (findType < 1 || findType > 5)
+		{
+			printf("\aОшбика! Нет типа с таким номером.\n");
+			waitForEnter();
+		}
+		else
+			isInputCorrect = 1;
+	} while (!isInputCorrect);
+	
+	switch (findType)
+	{
+	case 1:
+		break;
+	case 2:
+		break;
+	case 3:
+		break;
+	case 4:
+		break;
+	case 5:
+		break;
+	}
 }
 
 

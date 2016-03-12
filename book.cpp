@@ -905,6 +905,16 @@ Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2))
 }
 
 
+//ќписание: копирует данный из одной книги в другую
+void bookCopy(Book *origin, Book *copy)
+{
+	copy->title = origin->title;
+	copy->author = origin->author;
+	copy->genre = origin->genre;
+	copy->pageCt = origin->pageCt;
+}
+
+
 //ќписание: создает копию списка
 //¬озврат: указатель на первую книгу списка
 Book *listCopy(Book *head1)
@@ -918,19 +928,17 @@ Book *listCopy(Book *head1)
 		temp = head2;
 		while (head1->next != nullptr)
 		{
-			temp->title = head1->title;
-			temp->author = head1->author;
-			temp->genre = head1->genre;
-			temp->pageCt = head1->pageCt;
+			bookCopy(head1, temp);
 			temp->next = (Book*)malloc(sizeof(Book));
 			temp = temp->next;
 			head1 = head1->next;
 		}
-		temp->title = head2->title;
-		temp->author = head2->author;
-		temp->genre = head2->genre;
-		temp->pageCt = head2->pageCt;
+		bookCopy(head1, temp);
 		temp->next = nullptr;
 	}
 	return head2;
 }
+
+
+//ќписание: проверка, совпадает ли название книги со строкой
+//¬озврат: (1/0)
