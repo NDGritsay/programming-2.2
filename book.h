@@ -27,7 +27,7 @@ void genresInitialization(void);
 
 //Описание: проверка, есть ли жанр в списке жанров
 //Возврат: (1/0)
-int HasGenresGenre(char *genre);
+int hasGenresGenre(char *genre);
 
 //Описание: поиск количества жанров в массиве жанров
 //Возврат: количество жанров
@@ -46,7 +46,7 @@ void printHeadOfTable(void);
 //Описание: закрывает таблицу
 void endPrintOfTable(void);
 
-//Описание: вывод массива указателей на книги на экран
+//Описание: вывод списка книг на экран
 //Возврат: количество вниг в списке
 int printBooks(Book *head);
 
@@ -78,7 +78,11 @@ void deleteFirstBook(Book **head);
 //Описание: удаление последней в списке книги
 void deleteLastBook(Book **head);
 
-//Описание: поиск последней в списке книге
+//Описание: удаляет книгу из списка
+//Возврат: указатель на первую книгу в списке
+Book *deleteBookByLink(Book *head, Book *book);
+
+//Описание: поиск последней в списке книги
 //Возврат: указатель на последнюю книгу в списке
 Book *getLastBook(Book *head);
 
@@ -116,8 +120,40 @@ Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2));
 void bookCopy(Book *origin, Book *copy);
 
 //Описание: создает копию списка
-//Возврат: указатель на первую книгу списка
+//Возврат: указатель на первую книгу списка-копии
 Book *listCopy(Book *head1);
+
+//Описание: сравнение книг по названию
+int bookTitleCompare(Book *book1, Book *book2);
+
+//Описание: сравнение книг по автору
+int bookAuthorCompare(Book *book1, Book *book2);
+
+//Описание: сравнение книг по жанру
+int bookGenreCompare(Book *book1, Book *book2);
+
+//Описание: сравнение книг по количеству авторских листов
+int bookPageCtCompare(Book *book1, Book *book2);
+
+//Описание: поиск книг по критерию
+//Возврат: указатель на первую книгу результирующего списка
+Book *findBooks(Book *head, char *str, int(*isBookFit)(Book *book, char *str));
+
+//Описание: удаление книг по критерию
+//Возврат: указатель на первую книгу результирующего списка
+Book *deleteBooks(Book *head, char *str, int(*isBookFit)(Book *book, char *str));
+
+//Описание: проверка, совпадает ли название книги со строкой
+//Возврат: (1/0)
+int isBookTitleFit(Book *book, char *str);
+
+//Описание: проверка, совпадает ли имя автора книги со строкой
+//Возврат: (1/0)
+int isBookAuthorFit(Book *book, char *str);
+
+//Описание: проверка, совпадает ли жанр книги со строкой
+//Возврат: (1/0)
+int isBookGenreFit(Book *book, char *str);
 
 #ifndef _BOOK_
 #define _BOOK_

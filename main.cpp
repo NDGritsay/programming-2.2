@@ -20,7 +20,15 @@ int getDeleteType(void);
 
 //Описание: вывод меню сортировки книг и выбор пункта
 //Возврат: номер типа сортировки
-int getCompareType(void);
+int getSortType(void);
+
+//Описание: вывод меню поиска книг и выбор пункта
+//Возврат: указатель на функцию поиска книг
+int getFitType(char **str);
+
+//Описание: вывод меню поиска книг и выбор пункта
+//Возврат: указатель на функцию поиска книг
+int getProcType(void);
 
 int main(void)
 {
@@ -29,11 +37,11 @@ int main(void)
 	system("title = ЛР2 Односвязные списки языка С/С++");
 	genresInitialization();
 
-	int word1Ct = 0, word2Ct = 0, isProgEnd = 0, listId, newListId, addType, deleteType;
+	int word1Ct = 0, word2Ct = 0, isProgEnd = 0, listId, newListId, addType, deleteType, compType, sortType, fitType, isInputCorrect, isCreateNewList, isPrintList;
 	void((*addBook[])(Book**)) = {addFirstBook, addLastBook};  //массив функций добавления книг
 	void((*deleteBook[])(Book**)) = { deleteFirstBook, deleteLastBook };  //массив функций удаления книг
-	int((*compareBooks[])(Book*, Book*));  //массив функций сравнения книг
-	int((*isBookFit[])(Book*, void*));  //массив функций поиска книг по критерию
+	int((*compareBooks[])(Book*, Book*)) = {bookTitleCompare, bookAuthorCompare, bookGenreCompare, bookPageCtCompare};  //массив функций сравнения книг
+	int((*isBookFit[])(Book*, char*)) = {isBookTitleFit, isBookAuthorFit, isBookGenreFit};  //массив функций поиска книг по критерию
 	BookHead **heads = (BookHead**)malloc(sizeof(BookHead*));
 
 	*heads = nullptr;
@@ -102,27 +110,135 @@ int main(void)
 			waitForEnter();
 			break;
 		case 5: //работа со списком
-			/*if (*heads != nullptr)
-			{
-				system("cls");
-				printf("=Работа со списком=\n");
-				listId = setListId(heads);
-			}
-			else
-				printf("\aНет ни одного списка! Сначала создайте список.\n");
-			waitForEnter();*/
-			break;
-		case 6: //вывод списка
 			system("cls");
-			printf("=Вывод списка=\n");
+			printf("=Работа со списком=\n");
 			if (*heads != nullptr)
 			{
 				listId = setListId(heads);
-				printBooks((*(heads + listId))->head);
+				system("cls");
+				printf("=Работа со списком=\n"
+					"1 - совершить работу над списком.\n"
+					"2 - записать результат в новый список.\n");
+
+				isInputCorrect = 0;
+				do
+				{
+					printf("Введите ваше решение: ");
+					if (scanf("%d", &isCreateNewList) != 1)
+						printf("\aОшибка! Вы ввели не число.\n");
+					else if (isCreateNewList < 1 || isCreateNewList > 2)
+						printf("\aОшибка! Результат может быть 1 или 2");
+					else
+						isInputCorrect = 1;
+					if (!isInputCorrect)
+						waitForEnter();
+				} while (!isInputCorrect);
+				isCreateNewList--;
+
+				if (isCreateNewList)
+				{
+					heads = addList(heads);
+					for (newListId = 0; *(heads + newListId + 1) != nullptr; newListId++) //поиск последнего списка
+						;
+				}
+
+				system("cls");
+				printf("=Работа со списком=\n");
+				char *str;
+				switch (getProcType())
+				{
+				case 1:  //сортировка книг
+					system("cls");
+					printf("=Работа со списком=\n"
+						"=Сортировка книг=\n");
+					sortType = getSortType();
+					if (isCreateNewList)
+					{
+						((*(heads + newListId))->head) = listCopy((*(heads + listId))->head);
+						(*(heads + newListId))->head = sortBooks((*(heads + newListId))->head, compareBooks[sortType]);
+					}
+					else
+						(*(heads + listId))->head = sortBooks((*(heads + listId))->head, compareBooks[sortType]);
+					break;
+				case 2:  //поиск книг по критерию
+					system("cls");
+					printf("=Работа со списком=\n"
+						"=Поиск по критерию=\n");
+					fitType = getFitType(&str);
+					if (isCreateNewList)
+					{
+						((*(heads + newListId))->head) = listCopy((*(heads + listId))->head);
+						(*(heads + newListId))->head = findBooks((*(heads + newListId))->head, str, isBookFit[fitType]);
+					}
+					else
+						(*(heads + listId))->head = findBooks((*(heads + listId))->head, str, isBookFit[fitType]);
+					break;
+				case 3:  //удаление книг по критерию
+					system("cls");
+					printf("=Работа со списком=\n"
+						"=Поиск по критерию=\n");
+					fitType = getFitType(&str);
+					if (isCreateNewList)
+					{
+						((*(heads + newListId))->head) = listCopy((*(heads + listId))->head);
+						(*(heads + newListId))->head = deleteBooks((*(heads + newListId))->head, str, isBookFit[fitType]);
+					}
+					else
+						(*(heads + listId))->head = deleteBooks((*(heads + listId))->head, str, isBookFit[fitType]);
+					break;
+				}
+				system("cls");
+				printf("=Работа со списком=\n"
+					"Работа завершена!\n");
+			}
+			else
+				printf("\aНет ни одного списка! Сначала создайте список.\n");
+			waitForEnter();
+			break;
+		case 6: //вывод списка
+			if (*heads != nullptr)
+			{
+				system("cls");
+				printf("=Вывод списка=\n");
+				listId = setListId(heads);
+				Book *temp = listCopy((*(heads + listId))->head);
+				do
+				{
+					system("cls");
+					printf("=Вывод списка=\n"
+						"1 - Добавить критерий.\n"
+						"2 - Вывести список.\n");
+					isInputCorrect = 0;
+					do
+					{
+						printf("Сделайте выбор: ");
+						if (scanf("%d", &isPrintList) != 1)
+							printf("\aОшибка! Вы ввели не число.\n");
+						else if (--isPrintList < 0 || isPrintList > 1)
+							printf("\aОшибка! Введите 1 или 2.\n");
+						else
+							isInputCorrect = 1;
+						if (!isInputCorrect)
+							waitForEnter();
+					} while (!isInputCorrect);
+
+					if (!isPrintList)
+					{
+						char *str;
+						system("cls");
+						printf("=Вывод списка=\n");
+						fitType = getFitType(&str);
+						temp = findBooks(temp, str, isBookFit[fitType]);
+					}
+				} while (!isPrintList);
+				printBooks(temp);
+				freeList(temp);
 			}
 			else
 			{
-				printf("Нет ни одного списка! Сначала создайте список.\n");
+				system("cls");
+				printf("=Вывод списка=\n"
+					"Нет ни одного списка! Сначала создайте список.\n");
 				waitForEnter();
 			}
 			break;
@@ -233,7 +349,7 @@ int getDeleteType(void)
 
 //Описание: вывод меню сортировки книг и выбор пункта
 //Возврат: номер типа сортировки
-int getCompareType(void)
+int getSortType(void)
 {
 	int compareType, isInputCorrect = 0;
 	printf("=Выбор типа сортировки книг=\n"
@@ -263,23 +379,66 @@ int getCompareType(void)
 
 //Описание: вывод меню поиска книг и выбор пункта
 //Возврат: указатель на функцию поиска книг
-int getFindFunction(void)
+int getFitType(char **str)
 {
-	int findType, isInputCorrect = 0;
-	printf("1 - Поиск по названию.\n"
-		"2 - Поиск по автору.\n"
-		"3 - Поиск по жанру.\n"
-		"4 - Поиск по минимуму авторских листов.\n"
-		"5 - Поиск по максимуму авторских листов.");
+	int fitType, isInputCorrect = 0;
+	printf("=Выбор критерия=\n"
+		"1 - По названию.\n"
+		"2 - По автору.\n"
+		"3 - По жанру.\n");
 	do
 	{
-		printf("\nВведите тип поиска: ");
-		if (scanf("%d", &findType) != 1)
+		printf("\nВведите критерий: ");
+		if (scanf("%d", &fitType) != 1)
 		{
 			printf("\aОшибка! Вы ввели не число.\n");
 			waitForEnter();
 		}
-		else if (findType < 1 || findType > 5)
+		else if (fitType < 1 || fitType > 3)
+		{
+			printf("\aОшбика! Нет критерия с таким номером.\n");
+			waitForEnter();
+		}
+		else
+			isInputCorrect = 1;
+	} while (!isInputCorrect);
+
+	system("cls");
+	switch (fitType)
+	{
+	case 1:
+		*str = setTitleOfBook();
+		break;
+	case 2:
+		*str = setAuthorOfBook();
+		break;
+	case 3:
+		*str = setGenreOfBook();
+		break;
+	}
+
+	return fitType - 1;
+}
+
+
+//Описание: вывод меню поиска книг и выбор пункта
+//Возврат: указатель на функцию поиска книг
+int getProcType(void)
+{
+	int procType, isInputCorrect = 0;
+	printf("=Выбор типа обработки списка=\n"
+		"1 - Сортировка книг.\n"
+		"2 - Поиск книг по критерию.\n"
+		"3 - Удаление книг по критерию.\n");
+	do
+	{
+		printf("\nВведите тип обработки: ");
+		if (scanf("%d", &procType) != 1)
+		{
+			printf("\aОшибка! Вы ввели не число.\n");
+			waitForEnter();
+		}
+		else if (procType < 1 || procType > 3)
 		{
 			printf("\aОшбика! Нет типа с таким номером.\n");
 			waitForEnter();
@@ -287,20 +446,7 @@ int getFindFunction(void)
 		else
 			isInputCorrect = 1;
 	} while (!isInputCorrect);
-	
-	switch (findType)
-	{
-	case 1:
-		break;
-	case 2:
-		break;
-	case 3:
-		break;
-	case 4:
-		break;
-	case 5:
-		break;
-	}
+	return procType ;
 }
 
 

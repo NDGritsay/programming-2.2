@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "ndgstrings.h"
 
@@ -210,120 +211,12 @@ int setPageCtOfBook(void)
 }
 
 
-//Описание: ввод жанра книги
-//Возврат: указатель на первый символ строки
-char *setGenreOfBook(void)
-{
-	int isBookHasGenre, genreId, isInputCorrect;
-	char *genre;
-
-	printf("=Ввод жанра книги=\n");
-	
-	isInputCorrect = 0;
-	do
-	{
-		printf("У книги есть жанр?(1-Да/0-Нет): ");
-		if (scanf("%d", &isBookHasGenre) != 1)
-		{
-			rewind(stdin);
-			printf("\aОшибка! Вы ввели не число.\n");
-			waitForEnter();
-			isBookHasGenre = -1;
-		}
-		else if (isBookHasGenre != 0 && isBookHasGenre != 1)
-		{
-			printf("\aОшибка! Введите 1 или 0.\n");
-			waitForEnter();
-		}
-		else
-			isInputCorrect = 1;
-	} while (!isInputCorrect);
-
-	if (isBookHasGenre)
-	{
-		printf("\n"); //Вывод списка жанров
-		for (int i = 0; i < genresCt(); i++)
-			printf("%d-%s  %c", i+1, *(genres + i), i % 5 == 4 ? '\n' : ' ');
-		
-		isInputCorrect = 0;
-		do //Ввод номера жанра из списка
-		{
-			printf("\n\nВведите номер жанра из списка или 0, если хотите ввести новый жанр: ");
-			if (scanf("%d", &genreId) != 1)
-			{
-				rewind(stdin);
-				printf("\aОшибка! Вы ввели не число.\n");
-				waitForEnter();
-				genreId = -1;
-			}
-			else if (genreId < 0 || genreId > genresCt())
-			{
-				printf("\aОшибка! Такого номера жанра нет.\n");
-				waitForEnter();
-			}
-			else
-				isInputCorrect = 1;
-		} while (!isInputCorrect);
-
-		if (genreId)
-			genre = *(genres + genreId - 1);
-		else
-		{
-			genre = inputGenre();
-			if (HasGenresGenre(genre))
-				printf("\aВнимание! Жанр не добавлен, так как уже есть в списке жанров.\n");
-			else
-				addGenre(genre);
-		}
-	}
-	else
-		genre = "нет жанра";
-
-	printf("Ввод жанра завершен!\n");
-	waitForEnter();
-
-	return genre;
-}
-
 //Описание: поиск количества жанров в массиве жанров
 //Возврат: количество жанров
 int genresCt(void)
 {
 	int res;
 	for (res = 0; strlen(*(genres + res)); res++);
-	return res;
-}
-
-
-//Описание: инициализирует массив жанров
-void genresInitialization(void)
-{
-	//Обязательно оставлять нулевую строку для обозначения конца массива
-	char *genres2[] = { "анекдоты", "античная литература", "военная история", "бизнес-литература", "история",
-		"классическая литература", "компьютерная литература", "детектив", "рассказ", "роман", "лирика",
-		"политическая литература", "проза", "сказки", "словарь", "поэзия", "обучение", "философия", "фантастика",
-		"скетч", "эпопея", "эпос", "эссе", ""};
-	int gCt = 0;
-
-	while (strlen(*(genres2 + gCt)))  //поиск количества жанров
-		gCt++;
-	
-	genres = (char**)malloc(sizeof(char*) * (gCt + 1));
-	
-	for (int i = 0; i < gCt; i++)
-		*(genres + i) = genres2[i];
-	*(genres + gCt) = "";
-}
-
-
-//Описание: проверка, есть ли жанр в списке жанров
-//Возврат: (1/0)
-int HasGenresGenre(char *genre)
-{
-	int res = 0;
-	for (int i = 0; i < genresCt() && !res; i++)
-		if (!strcmp(*(genres + i), genre))
-			res = 1;
 	return res;
 }
 
@@ -420,6 +313,18 @@ char *inputGenre(void)
 }
 
 
+//Описание: проверка, есть ли жанр в списке жанров
+//Возврат: (1/0)
+int hasGenresGenre(char *genre)
+{
+	int res = 0;
+	for (int i = 0; i < genresCt() && !res; i++)
+		if (!strcmp(*(genres + i), genre))
+			res = 1;
+	return res;
+}
+
+
 //Описание: добавление жанра в массив жанров
 void addGenre(char *genre)
 {
@@ -427,6 +332,103 @@ void addGenre(char *genre)
 	genres = (char**)realloc(genres, sizeof(char*) * (genrCt + 1));
 	*(genres + genrCt - 1) = genre;
 	*(genres + genrCt) = "";
+}
+
+
+//Описание: ввод жанра книги
+//Возврат: указатель на первый символ строки
+char *setGenreOfBook(void)
+{
+	int isBookHasGenre, genreId, isInputCorrect;
+	char *genre;
+
+	printf("=Ввод жанра книги=\n");
+	
+	isInputCorrect = 0;
+	do
+	{
+		printf("У книги есть жанр?(1-Да/0-Нет): ");
+		if (scanf("%d", &isBookHasGenre) != 1)
+		{
+			rewind(stdin);
+			printf("\aОшибка! Вы ввели не число.\n");
+			waitForEnter();
+			isBookHasGenre = -1;
+		}
+		else if (isBookHasGenre != 0 && isBookHasGenre != 1)
+		{
+			printf("\aОшибка! Введите 1 или 0.\n");
+			waitForEnter();
+		}
+		else
+			isInputCorrect = 1;
+	} while (!isInputCorrect);
+
+	if (isBookHasGenre)
+	{
+		printf("\n"); //Вывод списка жанров
+		for (int i = 0; i < genresCt(); i++)
+			printf("%d-%s  %c", i+1, *(genres + i), i % 5 == 4 ? '\n' : ' ');
+		
+		isInputCorrect = 0;
+		do //Ввод номера жанра из списка
+		{
+			printf("\n\nВведите номер жанра из списка или 0, если хотите ввести новый жанр: ");
+			if (scanf("%d", &genreId) != 1)
+			{
+				rewind(stdin);
+				printf("\aОшибка! Вы ввели не число.\n");
+				waitForEnter();
+				genreId = -1;
+			}
+			else if (genreId < 0 || genreId > genresCt())
+			{
+				printf("\aОшибка! Такого номера жанра нет.\n");
+				waitForEnter();
+			}
+			else
+				isInputCorrect = 1;
+		} while (!isInputCorrect);
+
+		if (genreId)
+			genre = *(genres + genreId - 1);
+		else
+		{
+			genre = inputGenre();
+			if (hasGenresGenre(genre))
+				printf("\aВнимание! Жанр не добавлен, так как уже есть в списке жанров.\n");
+			else
+				addGenre(genre);
+		}
+	}
+	else
+		genre = "нет жанра";
+
+	printf("Ввод жанра завершен!\n");
+	waitForEnter();
+
+	return genre;
+}
+
+
+//Описание: инициализирует массив жанров
+void genresInitialization(void)
+{
+	//Обязательно оставлять нулевую строку для обозначения конца массива
+	char *genres2[] = { "анекдоты", "античная литература", "военная история", "бизнес-литература", "история",
+		"классическая литература", "компьютерная литература", "детектив", "рассказ", "роман", "лирика",
+		"политическая литература", "проза", "сказки", "словарь", "поэзия", "обучение", "философия", "фантастика",
+		"скетч", "эпопея", "эпос", "эссе", ""};
+	int gCt = 0;
+
+	while (strlen(*(genres2 + gCt)))  //поиск количества жанров
+		gCt++;
+	
+	genres = (char**)malloc(sizeof(char*) * (gCt + 1));
+	
+	for (int i = 0; i < gCt; i++)
+		*(genres + i) = genres2[i];
+	*(genres + gCt) = "";
 }
 
 
@@ -455,6 +457,69 @@ Book *inputBook(void)
 	waitForEnter();
 
 	return book;
+}
+
+
+//Описание: вывод шапки таблицы на экран
+void printHeadOfTable(void)
+{
+	int pageCt = PAGE_CT_MAX, pageCtRank = 0;
+	while (pageCt) //подсчет максимальной разрядности количества авторских листов
+		pageCt /= 10, pageCtRank++;
+
+	printf(" _____ ");  //верхняя строка
+	for (int i = 0; i < TITLE_MAX_SIZE; i++)
+		printf("_");
+	printf(" ");
+	for (int i = 0; i < AUTHOR_NAME_MAX_SIZE * 2 + 1; i++)
+		printf("_");
+	printf(" ");
+	for (int i = 0; i < GENRE_MAX_SIZE; i++)
+		printf("_");
+	printf(" ");
+	for (int i = 0; i < pageCtRank; i++)
+		printf("_");
+	printf("\n");
+
+	printf("|%-5s|%-*s|%-*s|%-*s|%-*s|\n", "Номер", TITLE_MAX_SIZE, "Название", AUTHOR_NAME_MAX_SIZE * 2 + 1, "Автор",
+		GENRE_MAX_SIZE, "Жанр", pageCtRank, "АЛ");
+
+	printf("|_____|");  //нижняя строка
+	for (int i = 0; i < TITLE_MAX_SIZE; i++)
+		printf("_");
+	printf("|");
+	for (int i = 0; i < AUTHOR_NAME_MAX_SIZE * 2 + 1; i++)
+		printf("_");
+	printf("|");
+	for (int i = 0; i < GENRE_MAX_SIZE; i++)
+		printf("_");
+	printf("|");
+	for (int i = 0; i < pageCtRank; i++)
+		printf("_");
+	printf("|\n");
+}
+
+
+//Описание: закрывает таблицу
+void endPrintOfTable(void)
+{
+	int pageCt = PAGE_CT_MAX, pageCtRank = 0;
+	while (pageCt) //подсчет максимальной разрядности количества авторских листов
+		pageCt /= 10, pageCtRank++;
+
+	printf("|_____|");
+	for (int i = 0; i < TITLE_MAX_SIZE; i++)
+		printf("_");
+	printf("|");
+	for (int i = 0; i < AUTHOR_NAME_MAX_SIZE * 2 + 1; i++)
+		printf("_");
+	printf("|");
+	for (int i = 0; i < GENRE_MAX_SIZE; i++)
+		printf("_");
+	printf("|");
+	for (int i = 0; i < pageCtRank; i++)
+		printf("_");
+	printf("|\n");
 }
 
 
@@ -510,118 +575,6 @@ int printBooks(Book *head)
 	}
 	waitForEnter();
 	return i;
-}
-
-
-//Описание: вывод шапки таблицы на экран
-void printHeadOfTable(void)
-{
-	int pageCt = PAGE_CT_MAX, pageCtRank = 0;
-	while (pageCt) //подсчет максимальной разрядности количества авторских листов
-		pageCt /= 10, pageCtRank++;
-
-	printf(" _____ ");  //верхняя строка
-	for (int i = 0; i < TITLE_MAX_SIZE; i++)
-		printf("_");
-	printf(" ");
-	for (int i = 0; i < AUTHOR_NAME_MAX_SIZE * 2 + 1; i++)
-		printf("_");
-	printf(" ");
-	for (int i = 0; i < GENRE_MAX_SIZE; i++)
-		printf("_");
-	printf(" ");
-	for (int i = 0; i < pageCtRank; i++)
-		printf("_");
-	printf("\n");
-
-	printf("|%-5s|%-*s|%-*s|%-*s|%-*s|\n","Номер", TITLE_MAX_SIZE, "Название", AUTHOR_NAME_MAX_SIZE * 2 + 1, "Автор",
-		GENRE_MAX_SIZE, "Жанр", pageCtRank, "АЛ");
-
-	printf("|_____|");  //нижняя строка
-	for (int i = 0; i < TITLE_MAX_SIZE; i++)
-		printf("_");
-	printf("|");
-	for (int i = 0; i < AUTHOR_NAME_MAX_SIZE * 2 + 1; i++)
-		printf("_");
-	printf("|");
-	for (int i = 0; i < GENRE_MAX_SIZE; i++)
-		printf("_");
-	printf("|");
-	for (int i = 0; i < pageCtRank; i++)
-		printf("_");
-	printf("|\n");
-}
-
-
-//Описание: закрывает таблицу
-void endPrintOfTable(void)
-{
-	int pageCt = PAGE_CT_MAX, pageCtRank = 0;
-	while (pageCt) //подсчет максимальной разрядности количества авторских листов
-		pageCt /= 10, pageCtRank++;
-
-	printf("|_____|");
-	for (int i = 0; i < TITLE_MAX_SIZE; i++)
-		printf("_");
-	printf("|");
-	for (int i = 0; i < AUTHOR_NAME_MAX_SIZE * 2 + 1; i++)
-		printf("_");
-	printf("|");
-	for (int i = 0; i < GENRE_MAX_SIZE; i++)
-		printf("_");
-	printf("|");
-	for (int i = 0; i < pageCtRank; i++)
-		printf("_");
-	printf("|\n");
-}
-
-
-//Описание: добавление нового списка в массив списков
-//Возврат: указатель на голову первого списка
-BookHead **addList(BookHead **heads)
-{
-	char *name;
-
-	int i = -1;
-	while (*(heads + ++i) != nullptr)
-		;
-	heads = (BookHead**)realloc(heads, sizeof(BookHead*) * (i + 2));
-
-	system("cls");
-	printf("=Добавление списка=\n");
-	while (hasHadsThatName(name = inputNameOfList(), heads))
-	{
-		printf("\aОшибка! Уже есть список с таким именем.\n");
-		waitForEnter();
-		system("cls");
-		printf("=Добавление списка=\n");
-	}
-	
-	*(heads + i) = (BookHead*)malloc(sizeof(BookHead));
-	(*(heads + i))->name = name;
-	(*(heads + i))->head = nullptr;
-	*(heads + i + 1) = nullptr;
-
-	printf("Добавление списка завершено!\n");
-	waitForEnter();
-	
-	return heads;
-}
-
-
-//Описание: удаление списка
-//Возврат: указатель на голову первого списка
-BookHead **deleteList(BookHead **heads, int listId)
-{
-	freeList((*(heads + listId))->head);
-	free(*(heads + listId));
-	int i = listId;
-	do
-	{
-		*(heads + i) = *(heads + i + 1);
-	} while (*(heads + i++) != nullptr);
-	heads = (BookHead**)realloc(heads, sizeof(BookHead*) * i);
-	return heads;
 }
 
 
@@ -701,6 +654,69 @@ int hasHadsThatName(char *name, BookHead **heads)
 }
 
 
+//Описание: добавление нового списка в массив списков
+//Возврат: указатель на голову первого списка
+BookHead **addList(BookHead **heads)
+{
+	char *name;
+
+	int i = -1;
+	while (*(heads + ++i) != nullptr)
+		;
+	heads = (BookHead**)realloc(heads, sizeof(BookHead*) * (i + 2));
+
+	system("cls");
+	printf("=Добавление списка=\n");
+	while (hasHadsThatName(name = inputNameOfList(), heads))
+	{
+		printf("\aОшибка! Уже есть список с таким именем.\n");
+		waitForEnter();
+		system("cls");
+		printf("=Добавление списка=\n");
+	}
+	
+	*(heads + i) = (BookHead*)malloc(sizeof(BookHead));
+	(*(heads + i))->name = name;
+	(*(heads + i))->head = nullptr;
+	*(heads + i + 1) = nullptr;
+
+	printf("Добавление списка завершено!\n");
+	waitForEnter();
+	
+	return heads;
+}
+
+
+//Описание: освобождение памяти односвязного списка
+void freeList(Book *head)
+{
+	Book *previous;
+
+	while (head != nullptr)
+	{
+		previous = head;
+		head = head->next;
+		free(previous);
+	}
+}
+
+
+//Описание: удаление списка
+//Возврат: указатель на голову первого списка
+BookHead **deleteList(BookHead **heads, int listId)
+{
+	freeList((*(heads + listId))->head);
+	free(*(heads + listId));
+	int i = listId;
+	do
+	{
+		*(heads + i) = *(heads + i + 1);
+	} while (*(heads + i++) != nullptr);
+	heads = (BookHead**)realloc(heads, sizeof(BookHead*) * i);
+	return heads;
+}
+
+
 //Описание: выбор списка
 //Возврат: порядковый номер списка
 int setListId(BookHead **heads)
@@ -741,6 +757,17 @@ void addFirstBook(Book **head)
 }
 
 
+//Описание: поиск последней в списке книге
+//Возврат: указатель на последнюю книгу в списке
+Book *getLastBook(Book *head)
+{
+	if (head != nullptr)
+		while (head->next != nullptr)
+			head = head->next;
+	return head;
+}
+
+
 //Описание: добавление книги в конец списка
 void addLastBook(Book **head)
 {
@@ -760,29 +787,6 @@ void deleteFirstBook(Book **head)
 }
 
 
-//Описание: удаление последней в списке книги
-void deleteLastBook(Book **head)
-{
-	Book *temp = getLastBook(*head);
-	if ((*head)->next != nullptr)
-		getLastButOneBook(*head)->next = nullptr;
-	else
-		(*head) = nullptr;
-	free(temp);
-}
-
-
-//Описание: поиск последней в списке книге
-//Возврат: указатель на последнюю книгу в списке
-Book *getLastBook(Book *head)
-{
-	if(head != nullptr)
-		while (head->next != nullptr)
-			head = head->next;
-	return head;
-}
-
-
 //Описание: поиск предпоследней в списке книги
 //Возврат: указатель на предпоследнюю в списке книгу
 Book *getLastButOneBook(Book *head)
@@ -796,6 +800,18 @@ Book *getLastButOneBook(Book *head)
 }
 
 
+//Описание: удаление последней в списке книги
+void deleteLastBook(Book **head)
+{
+	Book *temp = getLastBook(*head);
+	if ((*head)->next != nullptr)
+		getLastButOneBook(*head)->next = nullptr;
+	else
+		(*head) = nullptr;
+	free(temp);
+}
+
+
 //Описание: поиск номера книги
 //Возврат: номер книги
 int getBookId(Book *head, Book *book)
@@ -804,20 +820,6 @@ int getBookId(Book *head, Book *book)
 	for (i = 0; head != book; head = head->next)
 		i++;
 	return i;
-}
-
-
-//Описание: освобождение памяти односвязного списка
-void freeList(Book *head)
-{
-	Book *previous;
-
-	while (head != nullptr)
-	{
-		previous = head;
-		head = head->next;
-		free(previous);
-	}
 }
 
 
@@ -865,7 +867,7 @@ Book *swapBooks(Book *head, int i, int j)
 	else
 		head = getBookById(head, j);
 
-	if (i - j != 1)
+	if (j - i != 1)
 		getBookById(head, i)->next = iNextPtr;
 
 	getBookById(head, j - 1)->next = iPtr;
@@ -916,7 +918,7 @@ void bookCopy(Book *origin, Book *copy)
 
 
 //Описание: создает копию списка
-//Возврат: указатель на первую книгу списка
+//Возврат: указатель на первую книгу списка-копии
 Book *listCopy(Book *head1)
 {
 	Book *head2, *temp;
@@ -940,5 +942,103 @@ Book *listCopy(Book *head1)
 }
 
 
+//Описание: сравнение книг по названию
+int bookTitleCompare(Book *book1, Book *book2)
+{
+	return strcmp(book1->title, book2->title);
+}
+
+
+//Описание: сравнение книг по автору
+int bookAuthorCompare(Book *book1, Book *book2)
+{
+	return strcmp(book1->author, book2->author);
+}
+
+
+//Описание: сравнение книг по жанру
+int bookGenreCompare(Book *book1, Book *book2)
+{
+	return strcmp(book1->genre, book2->genre);
+}
+
+
+//Описание: сравнение книг по количеству авторских листов
+int bookPageCtCompare(Book *book1, Book *book2)
+{
+	return book1->pageCt - book2->pageCt;
+}
+
+
+//Описание: удаляет книгу из списка
+//Возврат: указатель на первую книгу в списке
+Book *deleteBookByLink(Book *head, Book *book)
+{
+	Book *temp = book;
+	if (head == book)
+		head = head->next;
+	else
+		getBookById(head, getBookId(head, book) - 1)->next = book->next;
+	free(temp);
+	return head;
+}
+
+
+//Описание: поиск книг по критерию
+//Возврат: указатель на первую книгу результирующего списка
+Book *findBooks(Book *head, char *str, int(*isBookFit)(Book *book, char *str))
+{
+	Book *temp = head;
+	while (temp != nullptr)
+		if (!isBookFit(temp, str))
+		{
+			Book *temp2 = temp;
+			temp = temp->next;
+			head = deleteBookByLink(head, temp2);
+		}
+		else
+			temp = temp->next;
+	return head;
+}
+
+
+//Описание: удаление книг по критерию
+//Возврат: указатель на первую книгу результирующего списка
+Book *deleteBooks(Book *head, char *str, int(*isBookFit)(Book *book, char *str))
+{
+	Book *temp = head;
+	while (temp != nullptr)
+		if (isBookFit(temp, str))
+		{
+			Book *temp2 = temp;
+			temp = temp->next;
+			head = deleteBookByLink(head, temp2);
+		}
+		else
+			temp = temp->next;
+	return head;
+}
+
+
 //Описание: проверка, совпадает ли название книги со строкой
 //Возврат: (1/0)
+int isBookTitleFit(Book *book, char *str)
+{
+	return !strcmp(book->title, str);
+}
+
+
+//Описание: проверка, совпадает ли имя автора книги со строкой
+//Возврат: (1/0)
+int isBookAuthorFit(Book *book, char *str)
+{
+	return !strcmp(book->author, str);
+}
+
+
+//Описание: проверка, совпадает ли жанр книги со строкой
+//Возврат: (1/0)
+int isBookGenreFit(Book *book, char *str)
+{
+	return !strcmp(book->genre, str);
+}

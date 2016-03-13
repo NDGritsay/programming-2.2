@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <conio.h>
+#include <ctype.h>
+#include <string.h>
 
 //Описание: ввод символа в режиме реального времени
 //Возврат: символ, введенный пользователем
