@@ -728,6 +728,7 @@ int setListId(BookHead **heads)
 		printf("%d - %s.\n", i + 1, (*(heads + i))->name);
 		i++;
 	}
+	printf("0 - назад в главное меню.");
 	do
 	{
 		printf("\nВведите номер списка: ");
@@ -736,7 +737,7 @@ int setListId(BookHead **heads)
 			printf("\aОшибка! Вы ввели не число.\n");
 			waitForEnter();
 		}
-		else if (listId < 1 || listId > i)
+		else if (listId < 0 || listId > i)
 		{
 			printf("\aОшибка! Списка с таким номером нет.\n");
 			waitForEnter();

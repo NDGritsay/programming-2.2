@@ -60,8 +60,13 @@ int main(void)
 			if (*heads != nullptr)
 			{
 				listId = setListId(heads);
-				heads = deleteList(heads, listId);
-				printf("Удаление списка завершено!\n");
+				if (listId != -1)
+				{
+					heads = deleteList(heads, listId);
+					printf("Удаление списка завершено!\n");
+				}
+				else
+					printf("Выход в главное меню.\n");
 			}
 			else
 				printf("Нет ни одного списка, чтобы удалить!\n");
@@ -73,13 +78,18 @@ int main(void)
 			if (*heads != nullptr)
 			{
 				listId = setListId(heads);
-				system("cls");
-				addType = getAddType();
-				system("cls");
-				addBook[addType](&(*(heads + listId))->head);
-				system("cls");
-				printf("=Добавление книги=\n"
-					"Добавление книги завершено!\n");
+				if (listId != -1)
+				{
+					system("cls");
+					addType = getAddType();
+					system("cls");
+					addBook[addType](&(*(heads + listId))->head);
+					system("cls");
+					printf("=Добавление книги=\n"
+						"Добавление книги завершено!\n");
+				}
+				else
+					printf("Выход в главное меню.\n");
 			}
 			else
 				printf("\aНет ни одного списка! Сначала создайте список.\n");
@@ -91,19 +101,24 @@ int main(void)
 			if (*heads != nullptr)
 			{
 				listId = setListId(heads);
-				system("cls");
-				if ((*(heads + listId))->head != nullptr)
+				if (listId != -1)
 				{
-					deleteType = getDeleteType();
 					system("cls");
-					deleteBook[deleteType](&(*(heads + listId))->head);
-					system("cls");
-					printf("=Удаление книги=\n"
-						"Удаление книги завершено!\n");
+					if ((*(heads + listId))->head != nullptr)
+					{
+						deleteType = getDeleteType();
+						system("cls");
+						deleteBook[deleteType](&(*(heads + listId))->head);
+						system("cls");
+						printf("=Удаление книги=\n"
+							"Удаление книги завершено!\n");
+					}
+					else
+						printf("=Удаление книги=\n"
+							"\aСписок пуст!\n");
 				}
 				else
-					printf("=Удаление книги=\n"
-						"\aСписок пуст!\n");
+					printf("Выход в главное меню.\n");
 			}
 			else
 				printf("\aНет ни одного списка! Сначала создайте список.\n");
@@ -116,80 +131,85 @@ int main(void)
 			{
 				listId = setListId(heads);
 				system("cls");
-				printf("=Работа со списком=\n"
-					"1 - совершить работу над списком.\n"
-					"2 - записать результат в новый список.\n");
-
-				isInputCorrect = 0;
-				do
-				{
-					printf("Введите ваше решение: ");
-					if (scanf("%d", &isCreateNewList) != 1)
-						printf("\aОшибка! Вы ввели не число.\n");
-					else if (isCreateNewList < 1 || isCreateNewList > 2)
-						printf("\aОшибка! Результат может быть 1 или 2");
-					else
-						isInputCorrect = 1;
-					if (!isInputCorrect)
-						waitForEnter();
-				} while (!isInputCorrect);
-				isCreateNewList--;
-
-				if (isCreateNewList)
-				{
-					heads = addList(heads);
-					for (newListId = 0; *(heads + newListId + 1) != nullptr; newListId++) //поиск последнего списка
-						;
-				}
-
-				system("cls");
 				printf("=Работа со списком=\n");
-				char *str;
-				switch (getProcType())
+				if (listId != -1)
 				{
-				case 1:  //сортировка книг
-					system("cls");
-					printf("=Работа со списком=\n"
-						"=Сортировка книг=\n");
-					sortType = getSortType();
+						printf("1 - совершить работу над списком.\n"
+						"2 - записать результат в новый список.\n");
+
+					isInputCorrect = 0;
+					do
+					{
+						printf("Введите ваше решение: ");
+						if (scanf("%d", &isCreateNewList) != 1)
+							printf("\aОшибка! Вы ввели не число.\n");
+						else if (isCreateNewList < 1 || isCreateNewList > 2)
+							printf("\aОшибка! Результат может быть 1 или 2");
+						else
+							isInputCorrect = 1;
+						if (!isInputCorrect)
+							waitForEnter();
+					} while (!isInputCorrect);
+					isCreateNewList--;
+
 					if (isCreateNewList)
 					{
-						((*(heads + newListId))->head) = listCopy((*(heads + listId))->head);
-						(*(heads + newListId))->head = sortBooks((*(heads + newListId))->head, compareBooks[sortType]);
+						heads = addList(heads);
+						for (newListId = 0; *(heads + newListId + 1) != nullptr; newListId++) //поиск последнего списка
+							;
 					}
-					else
-						(*(heads + listId))->head = sortBooks((*(heads + listId))->head, compareBooks[sortType]);
-					break;
-				case 2:  //поиск книг по критерию
+
+					system("cls");
+					printf("=Работа со списком=\n");
+					char *str;
+					switch (getProcType())
+					{
+					case 1:  //сортировка книг
+						system("cls");
+						printf("=Работа со списком=\n"
+							"=Сортировка книг=\n");
+						sortType = getSortType();
+						if (isCreateNewList)
+						{
+							((*(heads + newListId))->head) = listCopy((*(heads + listId))->head);
+							(*(heads + newListId))->head = sortBooks((*(heads + newListId))->head, compareBooks[sortType]);
+						}
+						else
+							(*(heads + listId))->head = sortBooks((*(heads + listId))->head, compareBooks[sortType]);
+						break;
+					case 2:  //поиск книг по критерию
+						system("cls");
+						printf("=Работа со списком=\n"
+							"=Поиск по критерию=\n");
+						fitType = getFitType(&str);
+						if (isCreateNewList)
+						{
+							((*(heads + newListId))->head) = listCopy((*(heads + listId))->head);
+							(*(heads + newListId))->head = findBooks((*(heads + newListId))->head, str, isBookFit[fitType]);
+						}
+						else
+							(*(heads + listId))->head = findBooks((*(heads + listId))->head, str, isBookFit[fitType]);
+						break;
+					case 3:  //удаление книг по критерию
+						system("cls");
+						printf("=Работа со списком=\n"
+							"=Поиск по критерию=\n");
+						fitType = getFitType(&str);
+						if (isCreateNewList)
+						{
+							((*(heads + newListId))->head) = listCopy((*(heads + listId))->head);
+							(*(heads + newListId))->head = deleteBooks((*(heads + newListId))->head, str, isBookFit[fitType]);
+						}
+						else
+							(*(heads + listId))->head = deleteBooks((*(heads + listId))->head, str, isBookFit[fitType]);
+						break;
+					}
 					system("cls");
 					printf("=Работа со списком=\n"
-						"=Поиск по критерию=\n");
-					fitType = getFitType(&str);
-					if (isCreateNewList)
-					{
-						((*(heads + newListId))->head) = listCopy((*(heads + listId))->head);
-						(*(heads + newListId))->head = findBooks((*(heads + newListId))->head, str, isBookFit[fitType]);
-					}
-					else
-						(*(heads + listId))->head = findBooks((*(heads + listId))->head, str, isBookFit[fitType]);
-					break;
-				case 3:  //удаление книг по критерию
-					system("cls");
-					printf("=Работа со списком=\n"
-						"=Поиск по критерию=\n");
-					fitType = getFitType(&str);
-					if (isCreateNewList)
-					{
-						((*(heads + newListId))->head) = listCopy((*(heads + listId))->head);
-						(*(heads + newListId))->head = deleteBooks((*(heads + newListId))->head, str, isBookFit[fitType]);
-					}
-					else
-						(*(heads + listId))->head = deleteBooks((*(heads + listId))->head, str, isBookFit[fitType]);
-					break;
+						"Работа завершена!\n");
 				}
-				system("cls");
-				printf("=Работа со списком=\n"
-					"Работа завершена!\n");
+				else
+					printf("Выход в главное меню.\n");
 			}
 			else
 				printf("\aНет ни одного списка! Сначала создайте список.\n");
@@ -201,38 +221,43 @@ int main(void)
 				system("cls");
 				printf("=Вывод списка=\n");
 				listId = setListId(heads);
-				Book *temp = listCopy((*(heads + listId))->head);
-				do
+				if (listId != -1)
 				{
-					system("cls");
-					printf("=Вывод списка=\n"
-						"1 - Добавить критерий.\n"
-						"2 - Вывести список.\n");
-					isInputCorrect = 0;
+					Book *temp = listCopy((*(heads + listId))->head);
 					do
 					{
-						printf("Сделайте выбор: ");
-						if (scanf("%d", &isPrintList) != 1)
-							printf("\aОшибка! Вы ввели не число.\n");
-						else if (--isPrintList < 0 || isPrintList > 1)
-							printf("\aОшибка! Введите 1 или 2.\n");
-						else
-							isInputCorrect = 1;
-						if (!isInputCorrect)
-							waitForEnter();
-					} while (!isInputCorrect);
-
-					if (!isPrintList)
-					{
-						char *str;
 						system("cls");
-						printf("=Вывод списка=\n");
-						fitType = getFitType(&str);
-						temp = findBooks(temp, str, isBookFit[fitType]);
-					}
-				} while (!isPrintList);
-				printBooks(temp);
-				freeList(temp);
+						printf("=Вывод списка=\n"
+							"1 - Добавить критерий.\n"
+							"2 - Вывести список.\n");
+						isInputCorrect = 0;
+						do
+						{
+							printf("Сделайте выбор: ");
+							if (scanf("%d", &isPrintList) != 1)
+								printf("\aОшибка! Вы ввели не число.\n");
+							else if (--isPrintList < 0 || isPrintList > 1)
+								printf("\aОшибка! Введите 1 или 2.\n");
+							else
+								isInputCorrect = 1;
+							if (!isInputCorrect)
+								waitForEnter();
+						} while (!isInputCorrect);
+
+						if (!isPrintList)
+						{
+							char *str;
+							system("cls");
+							printf("=Вывод списка=\n");
+							fitType = getFitType(&str);
+							temp = findBooks(temp, str, isBookFit[fitType]);
+						}
+					} while (!isPrintList);
+					printBooks(temp);
+					freeList(temp);
+				}
+				else
+					printf("Выход в главное меню.\n");
 			}
 			else
 			{
