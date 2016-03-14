@@ -192,14 +192,9 @@ int setPageCtOfBook(void)
 			waitForEnter();
 			pageCt = -1;
 		}
-		else if (pageCt < PAGE_CT_MIN)
+		else if (pageCt < PAGE_CT_MIN || pageCt > PAGE_CT_MAX)
 		{
-			printf("\aОшибка! Количество авторских листов не может быть меньше %d.\n", PAGE_CT_MIN);
-			waitForEnter();
-		}
-		else if (pageCt > PAGE_CT_MAX)
-		{
-			printf("\aОшибка! Количество авторских листов не может быть больше %d.\n", PAGE_CT_MAX);
+			printf("\aОшибка! Количество авторских листов не может быть меньше %d и не может быть больше %d.\n", PAGE_CT_MIN, PAGE_CT_MAX );
 			waitForEnter();
 		}
 		else
@@ -347,7 +342,7 @@ char *setGenreOfBook(void)
 	isInputCorrect = 0;
 	do
 	{
-		printf("У книги есть жанр?(1-Да/0-Нет): ");
+		printf("\nУ книги есть жанр?(1-Да/0-Нет): ");
 		if (scanf("%d", &isBookHasGenre) != 1)
 		{
 			rewind(stdin);
@@ -687,6 +682,16 @@ BookHead **addList(BookHead **heads)
 }
 
 
+//Описание: освобождение памяти книги
+void freeBook(Book *book)
+{
+	free(book->title);
+	free(book->author);
+	free(book->genre);
+	free(book);
+}
+
+
 //Описание: освобождение памяти односвязного списка
 void freeList(Book *head)
 {
@@ -696,8 +701,16 @@ void freeList(Book *head)
 	{
 		previous = head;
 		head = head->next;
-		free(previous);
+		freeBook(previous);
 	}
+}
+
+
+//Описание: освобождение памяти структуры BookHead
+void freeBookHead(BookHead *bookHead)
+{
+	free(bookHead->name);
+	free(bookHead);
 }
 
 
@@ -706,7 +719,7 @@ void freeList(Book *head)
 BookHead **deleteList(BookHead **heads, int listId)
 {
 	freeList((*(heads + listId))->head);
-	free(*(heads + listId));
+	freeBookHead(*(heads + listId));
 	int i = listId;
 	do
 	{
@@ -911,9 +924,9 @@ Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2))
 //Описание: копирует данный из одной книги в другую
 void bookCopy(Book *origin, Book *copy)
 {
-	copy->title = origin->title;
-	copy->author = origin->author;
-	copy->genre = origin->genre;
+	strcpy(copy->title, origin->title);
+	strcpy(copy->author, origin->author);
+	strcpy(copy->genre, origin->genre);
 	copy->pageCt = origin->pageCt;
 }
 

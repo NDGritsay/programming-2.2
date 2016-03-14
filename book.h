@@ -155,6 +155,13 @@ int isBookAuthorFit(Book *book, char *str);
 //Возврат: (1/0)
 int isBookGenreFit(Book *book, char *str);
 
+//Описание: освобождение памяти книги
+//Возврат: nullptr
+void freeBook(Book *book);
+
+//Описание: освобождение памяти структуры BookHead
+void freeBookHead(BookHead *bookHead);
+
 #ifndef _BOOK_
 #define _BOOK_
 #include "book.cpp"
