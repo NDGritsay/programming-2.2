@@ -261,3 +261,18 @@ char *deleteChar(char *str, int i)
 	str = (char*)realloc(str, sizeof(char) * i);
 	return str;
 }
+
+
+//Описание: создает копию строки
+//Возврат: указатель на первый символ копии
+char *makeCopyOfStr(char *str)
+{
+	char *copy = nullptr;
+	int i = 0;
+	do
+	{
+		copy = (char*)realloc(copy, sizeof(char) * (i + 1));
+		*(copy + i) = *(str + i);
+	} while (*(copy + i++) != '\0');
+	return copy;
+}

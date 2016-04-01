@@ -47,6 +47,10 @@ char *deleteChar(char *str, int i);
 //Возврат: (1/0)
 int isStrFirst(const char *str1, const char *str2);
 
+//Описание: создает копию строки
+//Возврат: указатель на первый символ копии
+char *makeCopyOfStr(char *str);
+
 #ifndef _NDGSTRINGS_
 #define _NDGSTRINGS_
 #include "ndgstrings.cpp"

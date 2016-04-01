@@ -868,8 +868,8 @@ int setBookId(int bookCt)
 }
 
 
-//Описание: перестановка двух книг в списке
-Book *swapBooks(Book *head, int i, int j)
+//Описание: перестановка двух книг в списке по номеру
+Book *swapBooksById(Book *head, int i, int j)
 {
 	Book *iPtr, *iNextPtr, *jNextPtr;
 	iPtr = getBookById(head, i);
@@ -891,6 +891,43 @@ Book *swapBooks(Book *head, int i, int j)
 }
 
 
+//Описание: поиск предшествующей в списке книги
+//Возврат: указатель на книгу
+Book *getPreviousBook(Book *head, Book *book)
+{
+	Book *prevBook = head;
+	if (head == book)
+		return nullptr;
+	while (prevBook->next != book)
+	prevBook = prevBook->next;
+	return prevBook;
+}
+
+
+//Описание: перестановка двух книг в списке по ссылке
+Book *swapBooksByLink(Book *head, Book *book1, Book *book2)
+{
+	Book *book1prev, *book2prev, *book2next;
+	book1prev = getPreviousBook(head, book1);
+	book2prev = getPreviousBook(head, book2);
+	book2next = book2->next;
+
+	if (book1 != head)
+		book1prev->next = book2;
+	else
+		head = book2;
+	if (book1->next != book2)
+	{
+		book2->next = book1->next;
+		book2prev->next = book1;
+	}
+	else
+		book2->next = book1;
+	book1->next = book2next;
+	return head;
+}
+
+
 //Описание: сортировка книг в списке
 //Возврат: указатель на первую книгу
 Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2))
@@ -906,9 +943,9 @@ Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2))
 			if (bookCompare(book1, book2) > 0)
 			{
 				if (book1 == head)
-					head = swapBooks(book1, 0, getBookId(book1, book2));
+					head = swapBooksByLink(book1, book1, book2);
 				else
-					getBookById(book1, getBookId(head, book1) - 1)->next = swapBooks(book1, 0, getBookId(book1, book2));
+					getPreviousBook(head, book1)->next = swapBooksByLink(book1,book1, book2);
 				Book *temp = book1;
 				book1 = book2;
 				book2 = temp;
@@ -924,9 +961,9 @@ Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2))
 //Описание: копирует данный из одной книги в другую
 void bookCopy(Book *origin, Book *copy)
 {
-	strcpy(copy->title, origin->title);
-	strcpy(copy->author, origin->author);
-	strcpy(copy->genre, origin->genre);
+	copy->title = makeCopyOfStr(origin->title);
+	copy->author = makeCopyOfStr(origin->author);
+	copy->genre = makeCopyOfStr(origin->genre);
 	copy->pageCt = origin->pageCt;
 }
 

@@ -109,8 +109,11 @@ BookHead **deleteList(BookHead **heads, int listId);
 //Возврат: номер книги
 int setBookId(int bookCt);
 
-//Описание: перестановка двух книг в списке
-Book *swapBooks(Book *head, int i, int j);
+//Описание: перестановка двух книг в списке по номеру
+Book *swapBooksById(Book *head, int i, int j);
+
+//Описание: перестановка двух книг в списке по ссылке
+Book *swapBooksByLink(Book *head, Book *book1, Book *book2);
 
 //Описание: сортировка книг в списке
 //Возврат: указатель на первую книгу
@@ -161,6 +164,10 @@ void freeBook(Book *book);
 
 //Описание: освобождение памяти структуры BookHead
 void freeBookHead(BookHead *bookHead);
+
+//Описание: поиск предшествующей в списке книги
+//Возврат: указатель на книгу
+Book *getPreviousBook(Book *head, Book *book);
 
 #ifndef _BOOK_
 #define _BOOK_
