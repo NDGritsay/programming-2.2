@@ -169,6 +169,10 @@ void freeBookHead(BookHead *bookHead);
 //Возврат: указатель на книгу
 Book *getPreviousBook(Book *head, Book *book);
 
+//Описание: перемещает книгу на позицию перед выбранной
+//Возврат: указатель на первую книгу списка
+Book *moveBook(Book *head, Book *dest, Book *src);
+
 #ifndef _BOOK_
 #define _BOOK_
 #include "book.cpp"

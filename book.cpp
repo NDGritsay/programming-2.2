@@ -928,33 +928,76 @@ Book *swapBooksByLink(Book *head, Book *book1, Book *book2)
 }
 
 
+////Описание: сортировка книг в списке
+////Возврат: указатель на первую книгу
+//Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2))
+//{
+//	Book *book1, *book2;
+//
+//	book1 = head;
+//	while (book1 != nullptr)
+//	{
+//		book2 = book1->next;
+//		while (book2 != nullptr)
+//		{
+//			if (bookCompare(book1, book2) > 0)
+//			{
+//				if (book1 == head)
+//					head = swapBooksByLink(book1, book1, book2);
+//				else
+//					getPreviousBook(head, book1)->next = swapBooksByLink(book1,book1, book2);
+//				Book *temp = book1;
+//				book1 = book2;
+//				book2 = temp;
+//			}
+//			book2 = book2->next;
+//		}
+//		book1 = book1->next;
+//	}
+//	return head;
+//}
+
+
 //Описание: сортировка книг в списке
-//Возврат: указатель на первую книгу
+//Возврат: указатель на первую книгу списка
 Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2))
 {
-	Book *book1, *book2;
-
-	book1 = head;
-	while (book1 != nullptr)
+	Book *temp, *temp2, *insertTemp;
+	temp = head->next;
+	while (temp != nullptr)
 	{
-		book2 = book1->next;
-		while (book2 != nullptr)
+		temp2 = head;
+		while (bookCompare(temp, temp2) > 0)
+			temp2 = temp2->next;
+		if (temp != temp2)
 		{
-			if (bookCompare(book1, book2) > 0)
-			{
-				if (book1 == head)
-					head = swapBooksByLink(book1, book1, book2);
-				else
-					getPreviousBook(head, book1)->next = swapBooksByLink(book1,book1, book2);
-				Book *temp = book1;
-				book1 = book2;
-				book2 = temp;
-			}
-			book2 = book2->next;
+			insertTemp = temp;
+			temp = temp->next;
+			head = moveBook(head, temp2, insertTemp);
 		}
-		book1 = book1->next;
+		else
+			temp = temp->next;
 	}
 	return head;
+}
+
+
+//Описание: перемещает книгу на позицию перед выбранной
+//Возврат: указатель на первую книгу списка
+Book *moveBook(Book *head, Book *dest, Book *src)
+{
+	Book *srcPrev, *destPrev;
+	if ((srcPrev = getPreviousBook(head, src)) != nullptr)
+		srcPrev->next = src->next;
+	else
+		head = src->next;
+	src->next = dest;
+	if ((destPrev = getPreviousBook(head, dest)) != nullptr)
+		destPrev->next = src;
+	else
+		head = src;
+	return head;
+
 }
 
 
