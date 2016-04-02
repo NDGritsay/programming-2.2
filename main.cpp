@@ -382,14 +382,14 @@ void setSortType(int sortType[2][2])
 
 	printf("=Выбор типа сортировки книг=\n" //Ввод поля первого приоритета
 		"=Выбор поля первого приоритета сортировки=\n"
-		"1 - Название."
-		"2 - Автор."
-		"3 - Жанр."
+		"1 - Название.\n"
+		"2 - Автор.\n"
+		"3 - Жанр.\n"
 		"4 - Кол-во авторских листов.");
 	isInputCorrect = 0;
 	do
 	{
-		printf("Введите номер поля: ");
+		printf("\nВведите номер поля: ");
 		if (scanf("%d", &sortType[0][0]) != 1)
 			printf("\aОшибка! Вы ввели не число.\n");
 		else if (sortType[0][0] < 1 || sortType[0][0] > 4)
@@ -399,11 +399,12 @@ void setSortType(int sortType[2][2])
 		if (!isInputCorrect)
 			waitForEnter();
 	} while (!isInputCorrect);
-	printf("Выполнть сортировку по возрастанию(0) или убыванию(1)?");
+
+	printf("Выполнть сортировку по возрастанию(1) или убыванию(0)?");
 	isInputCorrect = 0;
 	do
 	{
-		printf("Сделайте выбор: ");
+		printf("\nСделайте выбор: ");
 		if (scanf("%d", &sortType[0][1]) != 1)
 			printf("\aОшибка! Вы ввели не число.\n");
 		else if (sortType[0][1] < 0 || sortType[0][1] > 1)
@@ -417,17 +418,18 @@ void setSortType(int sortType[2][2])
 	system("cls");
 	printf("=Выбор типа сортировки книг=\n" //Ввод поля второго приоритета
 		"=Выбор поля второго приоритета сортировки=\n"
-		"1 - Название."
-		"2 - Автор."
-		"3 - Жанр."
-		"4 - Кол-во авторских листов.");
+		"1 - Название.\n"
+		"2 - Автор.\n"
+		"3 - Жанр.\n"
+		"4 - Кол-во авторских листов.\n"
+		"0 - Обойтись одним приоритетом.");
 	isInputCorrect = 0;
 	do
 	{
-		printf("Введите номер поля: ");
+		printf("\nВведите номер поля: ");
 		if (scanf("%d", &sortType[1][0]) != 1)
 			printf("\aОшибка! Вы ввели не число.\n");
-		else if (sortType[1][0] < 1 || sortType[1][0] > 4)
+		else if (sortType[1][0] < 0 || sortType[1][0] > 4)
 			printf("\aОшибка! Поля с таким номером нет.\n");
 		else if (sortType[0][0] == sortType[1][0])
 			printf("\aОшибка! Это поле уже является полем первого приоритета.\n");
@@ -436,10 +438,12 @@ void setSortType(int sortType[2][2])
 		if (!isInputCorrect)
 			waitForEnter();
 	} while (!isInputCorrect);
+
+	printf("Выполнть сортировку по возрастанию(1) или убыванию(0)?");
 	isInputCorrect = 0;
 	do
 	{
-		printf("Сделайте выбор: ");
+		printf("\nСделайте выбор: ");
 		if (scanf("%d", &sortType[1][1]) != 1)
 			printf("\aОшибка! Вы ввели не число.\n");
 		else if (sortType[1][1] < 0 || sortType[1][1] > 1)
@@ -449,8 +453,11 @@ void setSortType(int sortType[2][2])
 		if (!isInputCorrect)
 			waitForEnter();
 	} while (!isInputCorrect);
-	--sortType[0][0];
-	--sortType[1][0];
+
+	if (!sortType[0][1])
+		sortType[0][1] = -1;
+	if (!sortType[1][1])
+		sortType[1][1] = -1;
 }
 
 
