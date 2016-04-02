@@ -116,8 +116,9 @@ Book *swapBooksById(Book *head, int i, int j);
 Book *swapBooksByLink(Book *head, Book *book1, Book *book2);
 
 //Описание: сортировка книг в списке
-//Возврат: указатель на первую книгу
-Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2));
+//Возврат: указатель на первую книгу списка
+Book *sortBooks(Book *head, int(*cmp1)(Book *book1, Book *book2), int(*cmp2)(Book *book1, Book *book2),
+	int isFunc1Increase, int isFunc2Increse);
 
 //Описание: копирует данные из одной книги в другую
 void bookCopy(Book *origin, Book *copy);

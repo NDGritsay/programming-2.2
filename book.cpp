@@ -928,46 +928,17 @@ Book *swapBooksByLink(Book *head, Book *book1, Book *book2)
 }
 
 
-////Описание: сортировка книг в списке
-////Возврат: указатель на первую книгу
-//Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2))
-//{
-//	Book *book1, *book2;
-//
-//	book1 = head;
-//	while (book1 != nullptr)
-//	{
-//		book2 = book1->next;
-//		while (book2 != nullptr)
-//		{
-//			if (bookCompare(book1, book2) > 0)
-//			{
-//				if (book1 == head)
-//					head = swapBooksByLink(book1, book1, book2);
-//				else
-//					getPreviousBook(head, book1)->next = swapBooksByLink(book1,book1, book2);
-//				Book *temp = book1;
-//				book1 = book2;
-//				book2 = temp;
-//			}
-//			book2 = book2->next;
-//		}
-//		book1 = book1->next;
-//	}
-//	return head;
-//}
-
-
 //Описание: сортировка книг в списке
 //Возврат: указатель на первую книгу списка
-Book *sortBooks(Book *head, int(*bookCompare)(Book *book1, Book *book2))
+Book *sortBooks(Book *head, int(*cmp1)(Book *book1, Book *book2), int(*cmp2)(Book *book1, Book *book2),
+	int isFunc1Increase, int isFunc2Increse)
 {
 	Book *temp, *temp2, *insertTemp;
 	temp = head->next;
 	while (temp != nullptr)
 	{
 		temp2 = head;
-		while (bookCompare(temp, temp2) > 0)
+		while (bookCompare(temp, temp2, cmp1, cmp2, isFunc1Increase, isFunc2Increse) > 0)
 			temp2 = temp2->next;
 		if (temp != temp2)
 		{
@@ -1135,4 +1106,14 @@ int isBookAuthorFit(Book *book, char *str)
 int isBookGenreFit(Book *book, char *str)
 {
 	return !strcmp(book->genre, str);
+}
+
+
+//Описание: сравнение двух книг по двум критериям
+int bookCompare(Book *book1, Book *book2, int(*func1)(Book*, Book*), int(*func2)(Book*, Book*), int isFunc1Increase, int isFunc2Increse)
+{
+	int result = isFunc1Increase * func1(book1, book2);
+	if (!result && func2 != nullptr)
+		result = isFunc2Increse * func2(book1, book2);
+	return result;
 }

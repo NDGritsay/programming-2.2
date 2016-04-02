@@ -37,10 +37,10 @@ int main(void)
 	system("title = ЛР2 Односвязные списки языка С/С++");
 	genresInitialization();
 
-	int word1Ct = 0, word2Ct = 0, isProgEnd = 0, listId, newListId, addType, deleteType, compType, sortType, fitType, isInputCorrect, isCreateNewList, isPrintList;
+	int word1Ct = 0, word2Ct = 0, isProgEnd = 0, listId, newListId, addType, deleteType, compType, sortType[2][2], fitType, isInputCorrect, isCreateNewList, isPrintList;
 	void((*addBook[])(Book**)) = {addFirstBook, addLastBook};  //массив функций добавления книг
 	void((*deleteBook[])(Book**)) = { deleteFirstBook, deleteLastBook };  //массив функций удаления книг
-	int((*compareBooks[])(Book*, Book*)) = {bookTitleCompare, bookAuthorCompare, bookGenreCompare, bookPageCtCompare};  //массив функций сравнения книг
+	int((*compareBooks[])(Book*, Book*)) = {nullptr, bookTitleCompare, bookAuthorCompare, bookGenreCompare, bookPageCtCompare};  //массив функций сравнения книг
 	int((*isBookFit[])(Book*, char*)) = {isBookTitleFit, isBookAuthorFit, isBookGenreFit};  //массив функций поиска книг по критерию
 	BookHead **heads = (BookHead**)malloc(sizeof(BookHead*));
 
@@ -168,7 +168,7 @@ int main(void)
 						system("cls");
 						printf("=Работа со списком=\n"
 							"=Сортировка книг=\n");
-						sortType = getSortType();
+						getSortType(sortType);
 						if (isCreateNewList)
 						{
 							((*(heads + newListId))->head) = listCopy((*(heads + listId))->head);
@@ -374,31 +374,11 @@ int getDeleteType(void)
 
 //Описание: вывод меню сортировки книг и выбор пункта
 //Возврат: номер типа сортировки
-int getSortType(void)
+int setSortType(int sortType[2][2])
 {
 	int compareType, isInputCorrect = 0;
-	printf("=Выбор типа сортировки книг=\n"
-		"1 - Сортировка по названию.\n"
-		"2 - Сортировка по автору.\n"
-		"3 - Сортировка по жанру.\n"
-		"4 - Сортировка по количеству авторских листов.");
-	do
-	{
-		printf("\nВведите тип сортировки: ");
-		if (scanf("%d", &compareType) != 1)
-		{
-			printf("\aОшибка! Вы ввели не число.\n");
-			waitForEnter();
-		}
-		else if (compareType < 1 || compareType > 4)
-		{
-			printf("\aОшбика! Нет типа с таким номером.\n");
-			waitForEnter();
-		}
-		else
-			isInputCorrect = 1;
-	} while (!isInputCorrect);
-	return compareType - 1;
+	printf("=Выбор типа сортировки книг=\n");
+	///
 }
 
 
