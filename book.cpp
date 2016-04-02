@@ -1110,7 +1110,8 @@ int isBookGenreFit(Book *book, char *str)
 
 
 //Описание: сравнение двух книг по двум критериям
-int bookCompare(Book *book1, Book *book2, int(*func1)(Book*, Book*), int(*func2)(Book*, Book*), int isFunc1Increase, int isFunc2Increse)
+int bookCompare(Book *book1, Book *book2, int(*func1)(Book*, Book*), int(*func2)(Book*, Book*),
+	int isFunc1Increase, int isFunc2Increse)
 {
 	int result = isFunc1Increase * func1(book1, book2);
 	if (!result && func2 != nullptr)

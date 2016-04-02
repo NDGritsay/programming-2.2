@@ -174,6 +174,10 @@ Book *getPreviousBook(Book *head, Book *book);
 //Возврат: указатель на первую книгу списка
 Book *moveBook(Book *head, Book *dest, Book *src);
 
+//Описание: сравнение двух книг по двум критериям
+int bookCompare(Book *book1, Book *book2, int(*func1)(Book*, Book*), int(*func2)(Book*, Book*),
+	int isFunc1Increase, int isFunc2Increse);
+
 #ifndef _BOOK_
 #define _BOOK_
 #include "book.cpp"

@@ -20,7 +20,7 @@ int getDeleteType(void);
 
 //Описание: вывод меню сортировки книг и выбор пункта
 //Возврат: номер типа сортировки
-int getSortType(void);
+void setSortType(int sortType[2][2]);
 
 //Описание: вывод меню поиска книг и выбор пункта
 //Возврат: указатель на функцию поиска книг
@@ -168,14 +168,16 @@ int main(void)
 						system("cls");
 						printf("=Работа со списком=\n"
 							"=Сортировка книг=\n");
-						getSortType(sortType);
+						setSortType(sortType);
 						if (isCreateNewList)
 						{
 							((*(heads + newListId))->head) = listCopy((*(heads + listId))->head);
-							(*(heads + newListId))->head = sortBooks((*(heads + newListId))->head, compareBooks[sortType]);
+							(*(heads + newListId))->head = sortBooks((*(heads + newListId))->head, compareBooks[sortType[0][0]],
+								compareBooks[sortType[1][0]], sortType[0][1], sortType[1][1]);
 						}
 						else
-							(*(heads + listId))->head = sortBooks((*(heads + listId))->head, compareBooks[sortType]);
+							(*(heads + listId))->head = sortBooks((*(heads + listId))->head, compareBooks[sortType[0][0]],
+								compareBooks[sortType[1][0]], sortType[0][1], sortType[1][1]);
 						break;
 					case 2:  //поиск книг по критерию
 						system("cls");
@@ -374,11 +376,81 @@ int getDeleteType(void)
 
 //Описание: вывод меню сортировки книг и выбор пункта
 //Возврат: номер типа сортировки
-int setSortType(int sortType[2][2])
+void setSortType(int sortType[2][2])
 {
-	int compareType, isInputCorrect = 0;
-	printf("=Выбор типа сортировки книг=\n");
-	///
+	int isInputCorrect = 0;
+
+	printf("=Выбор типа сортировки книг=\n" //Ввод поля первого приоритета
+		"=Выбор поля первого приоритета сортировки=\n"
+		"1 - Название."
+		"2 - Автор."
+		"3 - Жанр."
+		"4 - Кол-во авторских листов.");
+	isInputCorrect = 0;
+	do
+	{
+		printf("Введите номер поля: ");
+		if (scanf("%d", &sortType[0][0]) != 1)
+			printf("\aОшибка! Вы ввели не число.\n");
+		else if (sortType[0][0] < 1 || sortType[0][0] > 4)
+			printf("\aОшибка! Поля с таким номером нет.\n");
+		else
+			isInputCorrect = 1;
+		if (!isInputCorrect)
+			waitForEnter();
+	} while (!isInputCorrect);
+	printf("Выполнть сортировку по возрастанию(0) или убыванию(1)?");
+	isInputCorrect = 0;
+	do
+	{
+		printf("Сделайте выбор: ");
+		if (scanf("%d", &sortType[0][1]) != 1)
+			printf("\aОшибка! Вы ввели не число.\n");
+		else if (sortType[0][1] < 0 || sortType[0][1] > 1)
+			printf("\aОшибка! Введите 1 или 0.\n");
+		else
+			isInputCorrect = 1;
+		if (!isInputCorrect)
+			waitForEnter();
+	} while (!isInputCorrect);
+
+	system("cls");
+	printf("=Выбор типа сортировки книг=\n" //Ввод поля второго приоритета
+		"=Выбор поля второго приоритета сортировки=\n"
+		"1 - Название."
+		"2 - Автор."
+		"3 - Жанр."
+		"4 - Кол-во авторских листов.");
+	isInputCorrect = 0;
+	do
+	{
+		printf("Введите номер поля: ");
+		if (scanf("%d", &sortType[1][0]) != 1)
+			printf("\aОшибка! Вы ввели не число.\n");
+		else if (sortType[1][0] < 1 || sortType[1][0] > 4)
+			printf("\aОшибка! Поля с таким номером нет.\n");
+		else if (sortType[0][0] == sortType[1][0])
+			printf("\aОшибка! Это поле уже является полем первого приоритета.\n");
+		else
+			isInputCorrect = 1;
+		if (!isInputCorrect)
+			waitForEnter();
+	} while (!isInputCorrect);
+	isInputCorrect = 0;
+	do
+	{
+		printf("Сделайте выбор: ");
+		if (scanf("%d", &sortType[1][1]) != 1)
+			printf("\aОшибка! Вы ввели не число.\n");
+		else if (sortType[1][1] < 0 || sortType[1][1] > 1)
+			printf("\aОшибка! Введите 1 или 0.\n");
+		else
+			isInputCorrect = 1;
+		if (!isInputCorrect)
+			waitForEnter();
+	} while (!isInputCorrect);
+	--sortType[0][0];
+	--sortType[1][0];
 }
 
 
