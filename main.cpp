@@ -1,4 +1,4 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #include <Windows.h>
 #include "ndgstrings.h"
 #include "book.h"

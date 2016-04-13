@@ -1,4 +1,4 @@
-﻿extern struct Book;
+extern struct Book;
 extern struct BookHead;
 extern char **genres;
 
